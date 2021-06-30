@@ -593,14 +593,26 @@ navbar .logo {
   cursor: pointer;
   color: #393e46;
 }
-.container-room .left-cont .footer .utilsleft .board-icon , .container-room .left-cont .footer .utilsleft .raise-hand, .container-room .left-cont .footer .utilsleft .record {
+.container-room .left-cont .footer .utilsleft .board-icon , 
+.container-room .left-cont .footer .utilsleft .raise-hand, 
+.container-room .left-cont .footer .utilsleft .record, 
+.container-room .left-cont .footer .utilsleft .record-screen,
+.container-room .left-cont .footer .utilsleft .mute-everyone,
+.container-room .left-cont .footer .utilsleft .hide-everyone {
+
   color: #9958e6;
   transition: background-color 0.3s;
   transition: color 0.3s;
   margin-left: 15px;
   
 }
-.container-room .left-cont .footer .utilsleft .board-icon:hover, .container-room .left-cont .footer .utilsleft .raise-hand:hover, .container-room .left-cont .footer .utilsleft .record:hover {
+.container-room .left-cont .footer .utilsleft .board-icon:hover, 
+.container-room .left-cont .footer .utilsleft .raise-hand:hover, 
+.container-room .left-cont .footer .utilsleft .record:hover, 
+.container-room .left-cont .footer .utilsleft .record-screen:hover,
+.container-room .left-cont .footer .utilsleft .mute-everyone:hover,
+.container-room .left-cont .footer .utilsleft .hide-everyone:hover {
+
   cursor: pointer;
   color: #393e46;
 }

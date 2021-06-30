@@ -253,7 +253,7 @@ function startCall() {
         .then(localStream => {
             myvideo.srcObject = localStream;
             myvideo.muted = true;
-
+            mystream = localStream;
             localStream.getTracks().forEach(track => {
                 for (let key in connections) {
                     connections[key].addTrack(track, localStream);
@@ -357,8 +357,7 @@ function handleVideoOffer(offer, sid, cname, micinf, vidinf) {
 
     connections[sid].setRemoteDescription(desc)
         .then(() => { return navigator.mediaDevices.getUserMedia(mediaConstraints) })
-        .then((localStream) => {
-
+        .then((localStream) => { 
             localStream.getTracks().forEach(track => {
                 connections[sid].addTrack(track, localStream);
                 console.log('added local stream to peer')
@@ -683,16 +682,16 @@ function screenShareToggle() {
     let screenMediaPromise;
     if (!screenshareEnabled) {
         if (navigator.getDisplayMedia) {
-            screenMediaPromise = navigator.getDisplayMedia({ video: true });
+            screenMediaPromise = navigator.getDisplayMedia({ video: true, audio: true });
         } else if (navigator.mediaDevices.getDisplayMedia) {
-            screenMediaPromise = navigator.mediaDevices.getDisplayMedia({ video: true });
+            screenMediaPromise = navigator.mediaDevices.getDisplayMedia({ video: true, audio:true });
         } else {
             screenMediaPromise = navigator.mediaDevices.getUserMedia({
                 video: { mediaSource: "screen" },
             });
         }
     } else {
-        screenMediaPromise = navigator.mediaDevices.getUserMedia({ video: true });
+        screenMediaPromise = navigator.mediaDevices.getUserMedia({ video: true, audio: true });
     }
     screenMediaPromise
         .then((myscreenshare) => {
@@ -708,7 +707,7 @@ function screenShareToggle() {
                 myscreenshare.getVideoTracks()[0], 
             ]);
             myvideo.srcObject = newStream;
-            myvideo.muted = true;
+            myvideo.muted = false;
             mystream = newStream;
             screenShareButt.innerHTML = (screenshareEnabled 
                 ? `<i class="fas fa-desktop"></i><span class="tooltiptext">Stop Share Screen</span>`
@@ -753,43 +752,70 @@ handButt.addEventListener('click', () => {
 
 
 
-//record-screen feature starts here
+
+//sharing screen to recorder
+
+function shareScreen() {
+    if ( this.userMediaAvailable() ) {
+        recordedStream =  navigator.mediaDevices.getDisplayMedia( { 
+            video: true,
+            audio: true
+        } );
+
+        return recordedStream;
+    }
+
+    else {
+        throw new Error( 'User media not available' );
+    }
+}
+
+function userMediaAvailable() {
+    return !!( navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia );
+}
+
+
+//record entire screen feature starts here
+
+const recordScreenBtn = document.querySelector('.record-screen');
+let isScreenRecording = false;
+
+recordScreenBtn.addEventListener("click", (e) => {
+    if (isScreenRecording) {
+      isScreenRecording=false;
+      stopRecording();
+    } 
+    else {
+        isScreenRecording=true;
+      shareScreen().then( ( screenStream ) => {
+            startRecording( screenStream );
+      } ).catch( () => { } );
+    }
+});
+
+//record-my-stream feature starts here
 
 const recordStreamBtn = document.querySelector('.record');
 let isStreamRecording = false;
 
-
 recordStreamBtn.addEventListener("click", (e) => {
     if (isStreamRecording) {
-      stopStreamRecording();
+        isStreamRecording=false;
+      stopRecording();
     } else {
-      startStreamRecording();
+        isStreamRecording=true;
+      startRecording(mystream);
     }
 });
 
-/**
- * Start recording time
- */
-//  function startRecordingTime() {
-//     recStartTime = Date.now();
-//     let rc = setInterval(function printTime() {
-//       if (isStreamRecording) {
-//         recElapsedTime = Date.now() - recStartTime;
-//         myVideoParagraph.innerHTML =
-//           myPeerName + "&nbsp;&nbsp; 🔴 REC " + getTimeToString(recElapsedTime);
-//         return;
-//       }
-//       clearInterval(rc);
-//     }, 1000);
-//   }
+
   
-  /**
-   * Start Recording
-   * https://github.com/webrtc/samples/tree/gh-pages/src/content/getusermedia/record
-   */
-  function startStreamRecording() {
+ //Start Recording
+
+  function startRecording(stream) {
     recordedBlobs = [];
     let options = { mimeType: "video/webm;codecs=vp9,opus" };
+
     if (!MediaRecorder.isTypeSupported(options.mimeType)) {
       console.error(`${options.mimeType} is not supported`);
       options = { mimeType: "video/webm;codecs=vp8,opus" };
@@ -798,14 +824,17 @@ recordStreamBtn.addEventListener("click", (e) => {
         options = { mimeType: "video/webm" };
         if (!MediaRecorder.isTypeSupported(options.mimeType)) {
           console.error(`${options.mimeType} is not supported`);
-          options = { mimeType: "" };
+          options = { mimeType: "audio/webm" };
+          if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+            console.error(`${options.mimeType} is not supported`);
+            options = { mimeType: "" };
+          }
         }
       }
     }
   
     try {
-      // record only my local Media Stream
-      mediaRecorder = new MediaRecorder(mystream, options);
+      mediaRecorder = new MediaRecorder(stream, options);
     } catch (err) {
       console.error("Exception while creating MediaRecorder:", err);
       alert(err);
@@ -816,84 +845,39 @@ recordStreamBtn.addEventListener("click", (e) => {
     mediaRecorder.onstop = (event) => {
       console.log("MediaRecorder stopped: ", event);
       console.log("MediaRecorder Blobs: ", recordedBlobs);
-      //myVideoParagraph.innerHTML = myPeerName + " (me)";
-      //disableElements(false);
+
       downloadRecordedStream();
-      // only for desktop
-    //   if (!isMobileDevice) {
-    //     tippy(recordStreamBtn, {
-    //       content: "START recording",
-    //       placement: "right-start",
-    //     });
-    //   }
+
     };
   
     mediaRecorder.ondataavailable = handleDataAvailable;
     mediaRecorder.start();
     console.log("MediaRecorder started", mediaRecorder);
-    isStreamRecording = true;
-    //recordStreamBtn.style.setProperty("background-color", "red");
-    //startRecordingTime();
-    //disableElements(true);
-    // only for desktop
-    // if (!isMobileDevice) {
-    //   tippy(recordStreamBtn, {
-    //     content: "STOP recording",
-    //     placement: "right-start",
-    //   });
-    // }
-  }
+}
   
-  /**
-   * Stop recording
-   */
-  function stopStreamRecording() {
+//Stop recording
+
+function stopRecording() {
     mediaRecorder.stop();
-    isStreamRecording = false;
-    //setRecordButtonUi();
-  }
+}
   
-  /**
-   * Set Record Button UI on change theme
-   */
-//   function setRecordButtonUi() {
-//     if (mirotalkTheme == "ghost") {
-//       recordStreamBtn.style.setProperty("background-color", "transparent");
-//     } else {
-//       recordStreamBtn.style.setProperty("background-color", "white");
-//     }
-//   }
   
-  /**
-   * recordind stream data
-   * @param {*} event
-   */
-  function handleDataAvailable(event) {
+//handling data
+
+function handleDataAvailable(event) {
     console.log("handleDataAvailable", event);
     if (event.data && event.data.size > 0) {
       recordedBlobs.push(event.data);
     }
-  }
+}
   
-  /**
-   * Download recorded stream
-   */
-  function downloadRecordedStream() {
+//Download recorded stream
+
+function downloadRecordedStream() {
     try {
       const blob = new Blob(recordedBlobs, { type: "video/webm" });
       const recFileName = getDataTimeString() + "-REC.webm";
-      //const currentDevice = isMobileDevice ? "MOBILE" : "PC";
       const blobFileSize = bytesToSize(blob.size);
-  
-    //   userlog(
-    //     "success-html",
-    //     `<div style="text-align: left;">
-    //       Recording Info <br/>
-    //       FILE: ${recFileName} <br/>
-    //       SIZE: ${blobFileSize} <br/>
-    //       Please wait to be processed, then will be downloaded to your ${currentDevice} device.
-    //     </div>`
-    //   );
 
 
   
@@ -913,22 +897,48 @@ recordStreamBtn.addEventListener("click", (e) => {
     catch (err) {
       alert(err);
     }
-  }
+}
 
-  function getDataTimeString() {
+function getDataTimeString() {
     const d = new Date();
     const date = d.toISOString().split("T")[0];
     const time = d.toTimeString().split(" ")[0];
     return `${date}-${time}`;
-  }
+}
 
-  function bytesToSize(bytes) {
+function bytesToSize(bytes) {
     let sizes = ["Bytes", "KB", "MB", "GB", "TB"];
     if (bytes == 0) return "0 Byte";
     let i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
     return Math.round(bytes / Math.pow(1024, i), 2) + " " + sizes[i];
-  }
+}
 
 
+
+
+//mute / hide everyone
+
+const muteEveryoneBtn = document.querySelector('.mute-everyone');
+const hideEveryoneBtn = document.querySelector('.hide-everyone');
+
+muteEveryoneBtn.addEventListener('click', () => {
+    disableAllPeers("audio");
+});
+
+hideEveryoneBtn.addEventListener('click', () => {
+    disableAllPeers("video");
+});
+
+
+function disableAllPeers(element) {
+    switch (element) {
+        case "audio":
+            
+            break;
+        case "video":
+            
+            break;
+    }
+}
   
 
