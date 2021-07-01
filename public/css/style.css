@@ -457,6 +457,14 @@ navbar .logo {
   font-size: 20px;
   bottom: 10px;
 }
+.container-room .left-cont .video-cont .video-box .hand-icon {
+  color: #d3b924;
+  bottom: 10px;
+  position: absolute;
+  right: 10px;
+  font-size: 20px;
+  top: 10px;
+}
 .container-room .left-cont .video-cont-single {
   height: 75vh;
 }
