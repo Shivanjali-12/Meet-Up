@@ -16,7 +16,8 @@ const screenShareButt = document.querySelector('.screenshare');
 const whiteboardButt = document.querySelector('.board-icon')
 
 
-//whiteboard js start
+//whiteboard feature starts here
+
 const whiteboardCont = document.querySelector('.whiteboard-cont');
 const canvas = document.querySelector("#whiteboard");
 const ctx = canvas.getContext('2d');
@@ -673,6 +674,11 @@ whiteboardButt.addEventListener('click', () => {
 // screensharing feature starts
 
 screenShareButt.addEventListener('click', () => {
+    videoButt.innerHTML = `<i class="fas fa-video"></i>`;
+    videoAllowed = 1;
+    videoButt.style.backgroundColor = "#c4c4c4";
+    myvideooff.style.visibility = 'hidden';
+    socket.emit('action', 'videoon');
     screenShareToggle();
 });
 
