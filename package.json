@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "emojionearea": "^3.4.2",
     "express": "^4.17.1",
     "moment": "^2.29.1",
     "nodemon": "^2.0.9",

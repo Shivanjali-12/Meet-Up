@@ -13,9 +13,12 @@ const videoButt = document.querySelector('.novideo');
 const audioButt = document.querySelector('.audio');
 const cutCall = document.querySelector('.cutcall');
 const screenShareButt = document.querySelector('.screenshare');
-const whiteboardButt = document.querySelector('.board-icon')
-const handButt = document.querySelector('.raise-hand')
+const whiteboardButt = document.querySelector('.board-icon');
+const handButt = document.querySelector('.raise-hand');
 
+const clapButt = document.querySelector('.clap');
+const thumbsupButt = document.querySelector('.thumbsup');
+const heartButt = document.querySelector('.heart')
 
 let videoAllowed = 1;
 let audioAllowed = 1;
@@ -86,7 +89,6 @@ continueButt.addEventListener('click', () => {
     overlayContainer.style.visibility = 'hidden';
     document.querySelector("#myname").innerHTML = `${username} (You)`;
     socket.emit("join room", roomid, username);
-
 })
 
 nameField.addEventListener("keyup", function (event) {
@@ -561,8 +563,6 @@ handButt.addEventListener('click', () => {
         handDown = 0;
         handButt.innerHTML = `<i class="fas fa-hand-rock"></i><span class="tooltiptext">Lower Hand</span>`;
         socket.emit('action', 'up');
-        let audio = new Audio("../audio/raiseHand.mp3");
-        audio.play();
     }
     else {
         myhandup.style.visibility = 'hidden';
@@ -572,26 +572,41 @@ handButt.addEventListener('click', () => {
     }
 });
 
+// reactions ---- clap / thumbs-up / heart
+
+clapButt.addEventListener('click', () => {
+    socket.emit('action' , 'clap');
+});
+
+thumbsupButt.addEventListener('click', () => {
+    socket.emit('action', 'thumbsup');
+});
+
+heartButt.addEventListener('click', () => {
+    socket.emit('action', 'heart');
+});
+
+
 
 
 socket.on('action', (msg, sid) => {
     if (msg == 'mute') {
-        console.log(sid + ' muted themself');
+        console.log(sid + ' muted');
         document.querySelector(`#mute${sid}`).style.visibility = 'visible';
         micInfo[sid] = 'off';
     }
     else if (msg == 'unmute') {
-        console.log(sid + ' unmuted themself');
+        console.log(sid + ' unmuted');
         document.querySelector(`#mute${sid}`).style.visibility = 'hidden';
         micInfo[sid] = 'on';
     }
     else if (msg == 'videooff') {
-        console.log(sid + 'turned video off');
+        console.log(sid + ' video off');
         document.querySelector(`#vidoff${sid}`).style.visibility = 'visible';
         videoInfo[sid] = 'off';
     }
     else if (msg == 'videoon') {
-        console.log(sid + 'turned video on');
+        console.log(sid + ' video on');
         document.querySelector(`#vidoff${sid}`).style.visibility = 'hidden';
         videoInfo[sid] = 'on';
     }
@@ -599,13 +614,26 @@ socket.on('action', (msg, sid) => {
         console.log(sid + 'raised his hand');
         document.querySelector(`#hand${sid}`).style.visibility = 'visible';
         handInfo[sid] = 'on';
+        let audio = new Audio("../audio/raiseHand.mp3");
+        audio.play();
     }
     else if (msg == 'down') {
         console.log(sid + 'lowered his hand');
         document.querySelector(`#hand${sid}`).style.visibility = 'hidden';
         handInfo[sid] = 'off';
     }
+    else if(msg == 'clap') {
+        alert( cName[sid] + " clapped !!");
+    }
+    else if(msg == 'thumbsup') {
+        alert( cName[sid] + " gave a Thumbs Up !!");
+    }
+    else if(msg == 'heart') {
+        alert( cName[sid] + " reacted with a heart !!");
+    }
 })
+
+
 
 //whiteboard feature starts here
 
@@ -654,7 +682,7 @@ function setColor(newcolor) {
 
 function setEraser() {
     color = "white";
-    drawsize = 10;
+    drawsize = 20;
 }
 
 //might remove this
@@ -664,6 +692,14 @@ function reportWindowSize() {
 
 window.onresize = reportWindowSize;
 //
+
+function saveBoard() {
+    let link = document.createElement("a");
+    link.download = getDataTimeString() + "WHITEBOARD.png";
+    link.href = canvas.toDataURL();
+    link.click();
+    link.delete;
+}
 
 function clearBoard() {
     if (window.confirm('Are you sure you want to clear board?')) {
@@ -999,23 +1035,33 @@ const muteEveryoneBtn = document.querySelector('.mute-everyone');
 const hideEveryoneBtn = document.querySelector('.hide-everyone');
 
 muteEveryoneBtn.addEventListener('click', () => {
-    disableAllPeers("audio");
+    // socket.emit("peerAction", {
+    //     peer_name: username,
+    //     peer_action: "muteEveryone",
+    // });   
 });
 
 hideEveryoneBtn.addEventListener('click', () => {
-    disableAllPeers("video");
+    // socket.emit("peerAction", {
+    //     peer_name: username,
+    //     peer_action: "hideEveryone",
+    //   });
 });
 
+// socket.on("peerAction", handlePeerAction);
 
-function disableAllPeers(element) {
-    switch (element) {
-        case "audio":
-            
-            break;
-        case "video":
-            
-            break;
-    }
-}
+// function handlePeerAction(config) {
+//     let peer_name = config.peer_name;
+//     let peer_action = config.peer_action;
   
+//     switch (peer_action) {
+//       case "muteEveryone":
+//         alert(peer_name + " has disabled your audio");
+//         break;
+//       case "hideEveryone":
+//         alert(peer_name + " has disabled your video");
+//         break;
+//     }
+// };
+
 

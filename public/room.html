@@ -4,10 +4,14 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Meet-Up</title>
+
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link rel="stylesheet" href="css/style.css">
+
     <script src="https://kit.fontawesome.com/6510466b6c.js" crossorigin="anonymous"></script>
+
     <script>
         const params = new URLSearchParams(location.search);
         if (!params.get("room")) location.href = "/";
@@ -27,6 +31,23 @@
 
     <div class="container-room">
         <div class="left-cont">
+
+            <div class="utilstop">
+                <div class="clap tooltip">
+                    <i class="fas fa-sign-language"></i>
+                    <span class="tooltiptext">Clap Hands</span>
+                </div>
+                <div class="thumbsup tooltip">
+                    <i class="fas fa-thumbs-up"></i>
+                    <span class="tooltiptext">Thumbs Up</span>
+                </div>
+                <div class="heart tooltip">
+                    <i class="fas fa-heart"></i>
+                    <span class="tooltiptext">React Heart</span>
+                </div>
+
+            </div>
+
 
             <div class="video-cont-single" id="vcont">
                 <div class="video-box">
@@ -52,8 +73,20 @@
                     <div class="pink" onclick="setColor('#fd79a8')"></div>
                     <div class="brown" onclick="setColor('#834c32')"></div>
                     <div class="grey" onclick="setColor('gray')"></div>
-                    <div class="eraser" onclick="setEraser()"><i class="fas fa-eraser"></i></div>
-                    <div class="clearboard" onclick="clearBoard()"><i class="fas fa-trash-alt"></i></div>
+
+                    <div class="eraser tooltip" onclick="setEraser()">
+                        <i class="fas fa-eraser"></i>
+                        <span class="tooltiptext">Eraser</span>
+                    </div>
+                    <div class="saveboard tooltip" onclick="saveBoard()">
+                        <i class="fas fa-save"></i>
+                        <span class="tooltiptext">Save Whiteboard</span>
+                    </div>
+                    <div class="clearboard tooltip" onclick="clearBoard()">
+                        <i class="fas fa-trash-alt"></i>
+                        <span class="tooltiptext">Clear Whiteboard</span>
+                    </div>
+
                 </div>
             </div>
 
@@ -79,7 +112,7 @@
                         <span class="tooltiptext">Share Screen</span>
                     </div>
                     <div class="board-icon tooltip">
-                        <i class="fas fa-chalkboard"></i>
+                        <i class="fas fa-chalkboard-teacher"></i>
                         <span class="tooltiptext">Open Whiteboard</span>
                     </div>
                     <div class="record tooltip">
@@ -124,14 +157,18 @@
             </div>
 
             <div class="chat-input-cont">
-                <div class="ci-cont"><input type="text" class="chat-input" placeholder="Your text here..."></div>
-                <div class="ci-send"><div class="chat-send"><i class="fas fa-paper-plane fa-1x"></i></div></div>
+
+                <div class="ci-cont">
+                    <input type="text" class="chat-input" placeholder="Your text here...">
+                </div>
+
+                <div class="ci-send">
+                    <div class="chat-send"><i class="fas fa-paper-plane fa-1x"></i></div>
+                </div>
             </div>
         </div>
 
     </div>
-
-
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/room.js"></script>
 </body>
