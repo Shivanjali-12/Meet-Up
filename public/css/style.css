@@ -160,20 +160,6 @@ navbar .logo {
   cursor: pointer;
 }
 
-@media (max-width: 1200px) {
-  .main {
-    flex-direction: column;
-  }
-  .main .create-join {
-    width: 100%;
-    margin-right: 0;
-  }
-  .main .video-cont {
-    margin-top: 100px;
-    margin-bottom: 100px;
-  }
-}
-
 
 .overlay {
   position: fixed;
@@ -263,7 +249,6 @@ navbar .logo {
 .container-room .left-cont {
   width: 80%;
   background-color: #393e46;
-  height: 100vh;
   padding: 70px 40px 10px 40px;
   text-align: center;
   position: relative;
@@ -427,7 +412,6 @@ navbar .logo {
 .container-room .left-cont .video-cont .video-box {
   background-color: #353b48;
   height: 100%;
-  min-height: 200px;
   width: 100%;
   border-radius: 5px;
   position: relative;
@@ -435,7 +419,6 @@ navbar .logo {
 .container-room .left-cont .video-cont .video-box .video-frame {
   background-color: #353b48;
   height: 100%;
-  min-height: 200px;
   width: 100%;
   object-fit: cover;
   border-radius: 5px;
@@ -480,7 +463,6 @@ navbar .logo {
 .container-room .left-cont .video-cont-single .video-box {
   background-color: #353b48;
   height: 100%;
-  min-height: 200px;
   width: 100%;
   border-radius: 5px;
   position: relative;
@@ -488,7 +470,6 @@ navbar .logo {
 .container-room .left-cont .video-cont-single .video-box .video-frame {
   background-color: #353b48;
   height: 100%;
-  min-height: 200px;
   width: 100%;
   object-fit: cover;
   border-radius: 5px;
@@ -533,7 +514,9 @@ navbar .logo {
 
 .container-room .left-cont .footer {
   position: relative;
-  margin-top: 35px;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  display: flex;
 }
 .container-room .left-cont .footer .utils {
   text-align: center;
@@ -553,23 +536,19 @@ navbar .logo {
   border-radius: 100px;
   transition: background-color 0.1s;
 }
-.container-room .left-cont .footer .utils .audio:hover {
-  color: white;
-  cursor: pointer;
-  background-color: #393e46;
-}
+
 .container-room .left-cont .footer .utils .novideo {
   background-color: #c4c4c4;
   text-align: center;
   margin-left: 10px;
   color: #393e46;
   padding: 10px;
-  border-radius: 100px;
   height: 40px;
   width: 40px;
+  border-radius: 100px;
   transition: background-color 0.1s;
 }
-.container-room .left-cont .footer .utils .novideo:hover {
+.container-room .left-cont .footer .utils .novideo:hover, .container-room .left-cont .footer .utils .audio:hover {
   color: white;
   cursor: pointer;
   background-color: #393e46;
@@ -635,7 +614,7 @@ navbar .logo {
 }
 
 .container-room .left-cont .utilstop{
-  position: fixed;
+  position: absolute;
   bottom:15px;
   top: 35px;
   left: 40px;
@@ -705,7 +684,6 @@ navbar .logo {
 .container-room .right-cont {
   width: 20%;
   background-color: #ffffff;
-  height: 100vh;
 }
 
 
@@ -763,7 +741,7 @@ navbar .logo {
 
 
 .container-room .right-cont .chat-input-cont {
-  padding: 8px;
+  padding: 10px;
   display: flex;
   height: 50px;
   background-color: #ffffff;
@@ -781,7 +759,7 @@ navbar .logo {
   width: 100%;
   height: 40px;
   font-size: 0.8rem;
-  padding: 4px 10px;
+  padding: 10px 10px;
   border: none;
   border-bottom: 3px solid #9958e6;
   color: #3b4047;
@@ -790,18 +768,12 @@ navbar .logo {
 
 .container-room .right-cont .chat-input-cont .chat-send {
   padding: 10px 5px;
+  text-align: center;
   color: #9958e6;
 }
 .container-room .right-cont .chat-input-cont .chat-send:hover {
   cursor: pointer;
 }
-
-
-
-
-
-
-
 
 .tooltip {
   position: relative;
@@ -840,5 +812,180 @@ navbar .logo {
 .tooltip:hover .tooltiptext {
   visibility: visible;
   opacity: 0.8;
+}
+
+
+
+@media (max-width: 1000px) {
+  .main {
+    flex-direction: column;
+  }
+  .main .create-join {
+    width: 100%;
+    margin-right: 0;
+  }
+  .main .video-cont {
+    margin-top: 100px;
+    margin-bottom: 100px;
+  }
+  .container-room {
+    flex-direction: column;
+  }
+  .container-room .left-cont {
+    width: 100%;
+    padding: 35px 20px 10px 20px;
+  }
+  .container-room .left-cont .video-cont {
+    height: 30vh;
+  }
+  .container-room .left-cont .video-cont-single {
+    height: 30vh;
+  }
+  .container-room .left-cont .utilstop{
+    position: absolute;
+    bottom:5px;
+    top: 10px;
+    left: 20px;
+    font-size: 10px;
+  }
+  .container-room .left-cont .whiteboard-cont {
+    height: 30vh;
+    top: 37px;
+    padding: 0px 20px 0px 20px;
+  }
+  .container-room .left-cont .whiteboard-cont .colors-cont {
+    right: 40px;
+    top: 10px;
+  }
+  .container-room .left-cont .whiteboard-cont .colors-cont .black,
+  .container-room .left-cont .whiteboard-cont .colors-cont .red,
+  .container-room .left-cont .whiteboard-cont .colors-cont .yellow,
+  .container-room .left-cont .whiteboard-cont .colors-cont .green,
+  .container-room .left-cont .whiteboard-cont .colors-cont .orange,
+  .container-room .left-cont .whiteboard-cont .colors-cont .purple,
+  .container-room .left-cont .whiteboard-cont .colors-cont .blue,
+  .container-room .left-cont .whiteboard-cont .colors-cont .pink,
+  .container-room .left-cont .whiteboard-cont .colors-cont .brown,
+  .container-room .left-cont .whiteboard-cont .colors-cont .grey,
+  .container-room .left-cont .whiteboard-cont .colors-cont .eraser,
+  .container-room .left-cont .whiteboard-cont .colors-cont .clearboard,
+  .container-room .left-cont .whiteboard-cont .colors-cont .saveboard {
+    height: 1.6vh;
+    width: 1.6vh;
+    font-size: 1.6vh;
+    margin-top: 2px;
+  }
+  
+  .container-room .left-cont .footer {
+    font-size: 10px;
+    margin-bottom: 10px;
+  }
+  .container-room .left-cont .footer .utilsleft {
+    margin: 3px auto;
+    padding: 4px;
+    border-bottom: 3px solid #9958e6;
+  }
+  .container-room .left-cont .footer .utilsleft .board-icon , 
+  .container-room .left-cont .footer .utilsleft .raise-hand, 
+  .container-room .left-cont .footer .utilsleft .record, 
+  .container-room .left-cont .footer .utilsleft .record-screen,
+  .container-room .left-cont .footer .utilsleft .mute-everyone,
+  .container-room .left-cont .footer .utilsleft .hide-everyone {
+  margin-left: 8px;
+  }
+  .container-room .left-cont .footer .utils .novideo, 
+  .container-room .left-cont .footer .utils .audio,
+  .container-room .left-cont .footer .utils .cutcall {
+    height: 25px;
+    width: 25px;
+    padding: 7px;
+  }
+  .container-room .left-cont .footer .copycode-cont {
+    margin: 3px auto;
+  }
+  .container-room .left-cont .footer .copycode-cont .copycode-button {
+    font-size: 10px;
+    padding: 4px;
+    width: 70px;
+  }
+  .container-room .left-cont .footer .copycode-cont .roomcode {
+    color: #9958e6;
+    padding: 4px 8px;
+    border-bottom: 3px solid #9958e6;
+  }
+  .container-room .right-cont {
+    width: 100%;
+  }
+  .container-room .right-cont .head-title .chats {
+    font-size: 12px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .container-room .right-cont .chat-cont {
+    height: 40vh;
+  }
+  .container-room .right-cont .chat-cont .message .info {
+    display: flex;
+    font-size: 0.5rem;
+  }
+
+  .container-room .right-cont .chat-cont .message .info .time {
+    margin-left: 10px;
+    font-style: italic;
+  }
+  .container-room .right-cont .chat-cont .message .content {
+    margin-top: 5px;
+    font-size: 0.6rem;
+  }
+  .container-room .right-cont .chat-input-cont {
+    margin-bottom: 10px;
+    height: 25px;
+  }
+  .container-room .right-cont .chat-input-cont .chat-input {
+    height: 25px;
+    font-size: 0.6rem;
+  }
+  .container-room .right-cont .chat-input-cont .chat-send {
+    padding: 5px 5px;
+  }
+}
+
+
+
+@media (max-width: 450px){
+  .container-room .left-cont .footer {
+    font-size: 8px;
+    margin-bottom: 8px;
+  }
+  .container-room .left-cont .footer .utilsleft {
+    margin: 2px auto;
+    padding: 3px;
+    border-bottom: 3px solid #9958e6;
+  }
+  .container-room .left-cont .footer .utilsleft .board-icon , 
+  .container-room .left-cont .footer .utilsleft .raise-hand, 
+  .container-room .left-cont .footer .utilsleft .record, 
+  .container-room .left-cont .footer .utilsleft .record-screen,
+  .container-room .left-cont .footer .utilsleft .mute-everyone,
+  .container-room .left-cont .footer .utilsleft .hide-everyone {
+  margin-left: 6px;
+  }
+  .container-room .left-cont .footer .utils .novideo, 
+  .container-room .left-cont .footer .utils .audio,
+  .container-room .left-cont .footer .utils .cutcall {
+    height: 20px;
+    width: 20px;
+    padding: 5px;
+  }
+  .container-room .left-cont .footer .copycode-cont .copycode-button {
+    font-size: 8px;
+    padding: 3px;
+    width: 60px;
+  }
+  .container-room .left-cont .footer .copycode-cont .roomcode {
+    color: #9958e6;
+    padding: 3px 6px;
+    border-bottom: 3px solid #9958e6;
+  }
 }
 
