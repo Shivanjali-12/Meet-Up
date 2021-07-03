@@ -24,6 +24,8 @@ let videoAllowed = 1;
 let audioAllowed = 1;
 let handDown = 1;
 
+let streams = []; //list-for-storing--streams
+
 let micInfo = {};
 let videoInfo = {};
 let handInfo = {};
@@ -49,7 +51,6 @@ let audioTrackSent = {};
 let videoTrackSent = {};
 
 let mystream, myscreenshare;
-
 
 document.querySelector('.roomcode').innerHTML = `${roomid}`
 
@@ -201,6 +202,8 @@ function handleVideoOffer(offer, sid, cname, micinf, vidinf, handinf) {
             newvideo.playsinline = true;
             newvideo.id = `video${sid}`;
             newvideo.srcObject = event.streams[0];
+
+            streams.push(event.streams[0]); //adding-streams-in-our-list
 
             if (micInfo[sid] == 'on')
                 muteIcon.style.visibility = 'hidden';
@@ -365,6 +368,7 @@ socket.on('join room', async (conc, cnames, micinfo, videoinfo, handinfo) => {
                     newvideo.playsinline = true;
                     newvideo.id = `video${sid}`;
                     newvideo.srcObject = event.streams[0];
+                    streams.push(event.streams[0]);
 
                     if (micInfo[sid] == 'on')
                         muteIcon.style.visibility = 'hidden';
@@ -768,12 +772,12 @@ socket.on('draw', (newX, newY, prevX, prevY, color, size) => {
 
 whiteboardButt.addEventListener('click', () => {
     if (boardVisisble) {
-        whiteboardButt.innerHTML = `<i class="fas fa-chalkboard"></i><span class="tooltiptext">Open Whiteboard</span>`;
+        whiteboardButt.innerHTML = `<i class="fas fa-chalkboard-teacher"></i><span class="tooltiptext">Open Whiteboard</span>`;
         whiteboardCont.style.visibility = 'hidden';
         boardVisisble = false;
     }
     else {
-        whiteboardButt.innerHTML = `<i class="fas fa-chalkboard"></i><span class="tooltiptext">Close Whiteboard</span>`;
+        whiteboardButt.innerHTML = `<i class="fas fa-chalkboard-teacher"></i><span class="tooltiptext">Close Whiteboard</span>`;
         whiteboardCont.style.visibility = 'visible';
         boardVisisble = true;
     }
@@ -879,6 +883,7 @@ let isScreenRecording = false;
 recordScreenBtn.addEventListener("click", (e) => {
     if (isScreenRecording) {
         recordScreenBtn.innerHTML = `<i class="fas fa-record-vinyl"></i><span class="tooltiptext">Record Entire Screen</span>`;
+        recordScreenBtn.style.color = "#9958e6";
         isScreenRecording=false;
         stopRecording();
     } 
@@ -890,10 +895,15 @@ recordScreenBtn.addEventListener("click", (e) => {
                 ? `<i class="fas fa-record-vinyl"></i><span class="tooltiptext">Stop Recording</span>`
                 : `<i class="fas fa-record-vinyl"></i><span class="tooltiptext">Record Entire Screen</span>`
             );
+            recordScreenBtn.style.color = (isScreenRecording 
+                ? "red"
+                : "#9958e6"
+            );
             screenStream.getVideoTracks()[0].onended = function() {
                 if (isScreenRecording){
                     isScreenRecording=false;
                     recordScreenBtn.innerHTML = `<i class="fas fa-record-vinyl"></i><span class="tooltiptext">Record Entire Screen</span>`;
+                    recordScreenBtn.style.color = "#9958e6";
                 }
             };  
         })
@@ -912,10 +922,12 @@ let isStreamRecording = false;
 recordStreamBtn.addEventListener("click", (e) => {
     if (isStreamRecording) {
         recordStreamBtn.innerHTML = `<i class="fas fa-camera"></i><span class="tooltiptext">Record Your Video</span>`;
+        recordStreamBtn.style.color = "#9958e6";
         isStreamRecording=false;
         stopRecording();
     } else {
         recordStreamBtn.innerHTML = `<i class="fas fa-camera"></i><span class="tooltiptext">Stop Recording</span>`;
+        recordStreamBtn.style.color = "red";
         isStreamRecording=true;
         startRecording(mystream);
     }
@@ -1029,39 +1041,51 @@ function bytesToSize(bytes) {
 
 
 
-//mute / hide everyone
+// mute / hide everyone's Incoming Stream for you only
 
 const muteEveryoneBtn = document.querySelector('.mute-everyone');
 const hideEveryoneBtn = document.querySelector('.hide-everyone');
 
+let ishidden = 0;
+let ismuted = 0;
+
 muteEveryoneBtn.addEventListener('click', () => {
-    // socket.emit("peerAction", {
-    //     peer_name: username,
-    //     peer_action: "muteEveryone",
-    // });   
+    if(ismuted==0){
+        ismuted = 1;
+        muteEveryoneBtn.innerHTML = `<i class="fas fa-microphone-slash"></i><span class="tooltiptext">Unmute Incoming Audios</span>`;
+        muteEveryoneBtn.style.color = "red";
+        for(let i=0; i<streams.length; i++){
+            streams[i].getAudioTracks()[0].enabled = false;
+        }
+    }
+    else{
+        ismuted = 0;
+        muteEveryoneBtn.innerHTML = `<i class="fas fa-microphone-slash"></i><span class="tooltiptext">Mute Incoming Audios</span>`;
+        muteEveryoneBtn.style.color = "#9958e6";
+        for(let i=0; i<streams.length; i++){
+            streams[i].getAudioTracks()[0].enabled = true;
+        }
+    }
 });
 
 hideEveryoneBtn.addEventListener('click', () => {
-    // socket.emit("peerAction", {
-    //     peer_name: username,
-    //     peer_action: "hideEveryone",
-    //   });
+    if(ishidden==0){
+        ishidden = 1;
+        hideEveryoneBtn.innerHTML = `<i class="fas fa-video-slash"></i><span class="tooltiptext">Unhide Incoming Vedios</span>`;
+        hideEveryoneBtn.style.color = "red";
+        for(let i=0; i<streams.length; i++){
+            streams[i].getVideoTracks()[0].enabled = false;
+        }
+    }
+    else{
+        ishidden = 0;
+        hideEveryoneBtn.innerHTML = `<i class="fas fa-video-slash"></i><span class="tooltiptext">Hide Incoming Vedios</span>`;
+        hideEveryoneBtn.style.color = "#9958e6";
+        for(let i=0; i<streams.length; i++){
+            streams[i].getVideoTracks()[0].enabled = true;
+        }
+    }
 });
 
-// socket.on("peerAction", handlePeerAction);
-
-// function handlePeerAction(config) {
-//     let peer_name = config.peer_name;
-//     let peer_action = config.peer_action;
-  
-//     switch (peer_action) {
-//       case "muteEveryone":
-//         alert(peer_name + " has disabled your audio");
-//         break;
-//       case "hideEveryone":
-//         alert(peer_name + " has disabled your video");
-//         break;
-//     }
-// };
 
 
