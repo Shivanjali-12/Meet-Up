@@ -95,7 +95,7 @@ io.on('connect', socket => {
 
     socket.on('disconnect', () => {
         if (!socketroom[socket.id]) return;
-        socket.to(socketroom[socket.id]).emit('message', `${socketname[socket.id]} left the chat.`, `Bot`, moment().format(
+        socket.to(socketroom[socket.id]).emit('message', `${socketname[socket.id]} left the room.`, `Bot`, moment().format(
             "h:mm a"
         ));
         socket.to(socketroom[socket.id]).emit('remove peer', socket.id);
@@ -105,8 +105,6 @@ io.on('connect', socket => {
         delete socketroom[socket.id];
         console.log('--------------------');
         console.log(rooms[socketroom[socket.id]]);
-
-        //toDo: push socket.id out of rooms
     });
 })
 
