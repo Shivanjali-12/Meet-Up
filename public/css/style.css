@@ -593,6 +593,7 @@ navbar .logo {
 .container-room .left-cont .footer .utilsleft .raise-hand, 
 .container-room .left-cont .footer .utilsleft .record, 
 .container-room .left-cont .footer .utilsleft .record-screen,
+.container-room .left-cont .footer .utilsleft .attendies-data,
 .container-room .left-cont .footer .utilsleft .mute-everyone,
 .container-room .left-cont .footer .utilsleft .hide-everyone {
 
@@ -606,6 +607,7 @@ navbar .logo {
 .container-room .left-cont .footer .utilsleft .raise-hand:hover, 
 .container-room .left-cont .footer .utilsleft .record:hover, 
 .container-room .left-cont .footer .utilsleft .record-screen:hover,
+.container-room .left-cont .footer .utilsleft .attendies-data:hover,
 .container-room .left-cont .footer .utilsleft .mute-everyone:hover,
 .container-room .left-cont .footer .utilsleft .hide-everyone:hover {
 
@@ -667,6 +669,7 @@ navbar .logo {
 }
 .container-room .left-cont .footer .copycode-cont .copycode-button:hover {
   cursor: pointer;
+  color: #393e46;
 }
 .container-room .left-cont .footer .copycode-cont .copycode-button:focus {
   outline: none;
@@ -710,6 +713,13 @@ navbar .logo {
   padding-top: 15px;
   padding-bottom: 15px;
   text-align: center;
+}
+.container-room .right-cont .head-title .chats .msg-save{
+  margin-left: 15px;
+}
+.container-room .right-cont .head-title .chats .msg-save:hover{
+  cursor: pointer;
+  color: #393e46;
 }
 
 .container-room .right-cont .chat-cont {
@@ -773,6 +783,7 @@ navbar .logo {
 }
 .container-room .right-cont .chat-input-cont .chat-send:hover {
   cursor: pointer;
+  color: #393e46;
 }
 
 .tooltip {
@@ -889,6 +900,7 @@ navbar .logo {
   .container-room .left-cont .footer .utilsleft .raise-hand, 
   .container-room .left-cont .footer .utilsleft .record, 
   .container-room .left-cont .footer .utilsleft .record-screen,
+  .container-room .left-cont .footer .utilsleft .attendies-data,
   .container-room .left-cont .footer .utilsleft .mute-everyone,
   .container-room .left-cont .footer .utilsleft .hide-everyone {
   margin-left: 8px;
@@ -952,7 +964,7 @@ navbar .logo {
 
 
 
-@media (max-width: 450px){
+@media (max-width: 480px){
   .container-room .left-cont .footer {
     font-size: 8px;
     margin-bottom: 8px;
@@ -966,6 +978,7 @@ navbar .logo {
   .container-room .left-cont .footer .utilsleft .raise-hand, 
   .container-room .left-cont .footer .utilsleft .record, 
   .container-room .left-cont .footer .utilsleft .record-screen,
+  .container-room .left-cont .footer .utilsleft .attendies-data,
   .container-room .left-cont .footer .utilsleft .mute-everyone,
   .container-room .left-cont .footer .utilsleft .hide-everyone {
   margin-left: 6px;

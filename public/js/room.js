@@ -2,19 +2,24 @@ const socket = io();
 const myvideo = document.querySelector("#vd1");
 const roomid = params.get("room");
 let username;
+
+const msgSaveButt = document.querySelector('.msg-save');
 const chatRoom = document.querySelector('.chat-cont');
 const sendButton = document.querySelector('.chat-send');
 const messageField = document.querySelector('.chat-input');
+
 const videoContainer = document.querySelector('#vcont');
 const overlayContainer = document.querySelector('#overlay')
 const continueButt = document.querySelector('.continue-name');
 const nameField = document.querySelector('#name-field');
+
 const videoButt = document.querySelector('.novideo');
 const audioButt = document.querySelector('.audio');
 const cutCall = document.querySelector('.cutcall');
 const screenShareButt = document.querySelector('.screenshare');
 const whiteboardButt = document.querySelector('.board-icon');
 const handButt = document.querySelector('.raise-hand');
+const AttendiesDataButt = document.querySelector('.attendies-data');
 
 const clapButt = document.querySelector('.clap');
 const thumbsupButt = document.querySelector('.thumbsup');
@@ -25,6 +30,8 @@ let audioAllowed = 1;
 let handDown = 1;
 
 let streams = []; //list-for-storing--streams
+let chatMessages = []; // collect chat messages to save it later if want
+let attendiesData = []; // collect time of attendies entering and leaving the room
 
 let micInfo = {};
 let videoInfo = {};
@@ -457,6 +464,20 @@ messageField.addEventListener("keyup", function (event) {
 });
 
 socket.on('message', (msg, sendername, time) => {
+    if(msg.length==0)return;
+    // collect attendies data to save it later
+    if(sendername == "Bot"){
+        attendiesData.push({
+            Time: time,
+            Status: msg,
+        });
+    }
+    // collect chat msges to save it later
+    chatMessages.push({
+        Time: time,
+        Name: sendername,
+        Text: msg,
+    });
     chatRoom.scrollTop = chatRoom.scrollHeight;
     chatRoom.innerHTML += `<div class="message">
     <div class="info">
@@ -467,6 +488,37 @@ socket.on('message', (msg, sendername, time) => {
     ${msg}
     </div>
     </div>`
+});
+
+
+msgSaveButt.addEventListener("click", (e) => {
+    if (chatMessages.length != 0) {
+        let a = document.createElement("a");
+        a.href =
+          "data:text/json;charset=utf-8," +
+          encodeURIComponent(JSON.stringify(chatMessages, null, 1));
+        a.download = getDataTimeString() + "-CHAT.txt";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        return;
+    }
+    alert("No chat messages to save");
+});
+
+AttendiesDataButt.addEventListener("click", (e) => {
+    if (attendiesData.length != 0) {
+        let a = document.createElement("a");
+        a.href =
+          "data:text/json;charset=utf-8," +
+          encodeURIComponent(JSON.stringify(attendiesData, null, 1));
+        a.download = getDataTimeString() + "-CHAT.txt";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        return;
+    }
+    alert("No Attendie entered the room yet");
 });
 
 //toggle video icons
