@@ -3,6 +3,17 @@ const express = require('express')
 const http = require('http')
 const moment = require('moment');
 const socketio = require('socket.io');
+require('dotenv').config();
+
+const mongoose = require('mongoose');
+const mongoDB = 'mongodb+srv://' + process.env.ADMIN + ':' + process.env.PASSWORD + '@cluster0.0v9er.mongodb.net/' + process.env.DBNAME + '?retryWrites=true&w=majority';
+
+mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
+    console.log('connected')
+}).catch(err => console.log(err))
+
+const Msg = require("./models/messages.js");
+
 const PORT = process.env.PORT || 3000;
 
 const app = express();
@@ -22,7 +33,6 @@ let roomBoard = {};
 io.on('connect', socket => {
 
     socket.on("join room", (roomid, username) => {
-
         socket.join(roomid);
         socketroom[socket.id] = roomid;
         socketname[socket.id] = username;
@@ -34,6 +44,7 @@ io.on('connect', socket => {
             socket.to(roomid).emit('message', `${username} joined the room.`, 'Bot', moment().format(
                 "h:mm a"
             ));
+
             io.to(socket.id).emit('join room', rooms[roomid].filter(pid => pid != socket.id), socketname, micSocket, videoSocket);
         }
         else {
@@ -41,9 +52,18 @@ io.on('connect', socket => {
             io.to(socket.id).emit('join room', null, null, null, null);
         }
 
-        io.to(roomid).emit('user count', rooms[roomid].length);
+        io.to(roomid).emit('user count', rooms[roomid].length);     
+
+        Msg.find({roomId: roomid})
+        .sort({ createdAt: -1 })
+        .limit(100)
+        .then(messages => {
+            io.to(roomid).emit('display', messages.reverse());
+        })
+        .catch(error => console.log(`error: ${error.message}`));
 
     });
+
 
     socket.on('action', msg => {
         if (msg == 'mute')
@@ -67,13 +87,23 @@ io.on('connect', socket => {
     })
 
     socket.on('new icecandidate', (candidate, sid) => {
-        socket.to(sid).emit('new icecandidate', candidate, socket.id);
+        socket.to(sid).emit('new icecandidate', candidate, socket.id); 
     })
 
     socket.on('message', (msg, username, roomid) => {
-        io.to(roomid).emit('message', msg, username, moment().format(
-            "h:mm a"
-        ));
+        let messageAttributes = {
+            content: msg,
+            senderName: username,
+            time: moment().format("h:mm a"),
+            roomId: roomid
+        },
+        m = new Msg(messageAttributes);
+        m.save()
+            .then(() => {
+                io.to(roomid).emit('message', msg, username, moment().format("h:mm a")
+            );
+        })
+        .catch(error => console.log(`error: ${error.message}`));
     })
 
     socket.on('getCanvas', () => {
@@ -98,6 +128,7 @@ io.on('connect', socket => {
         socket.to(socketroom[socket.id]).emit('message', `${socketname[socket.id]} left the room.`, `Bot`, moment().format(
             "h:mm a"
         ));
+
         socket.to(socketroom[socket.id]).emit('remove peer', socket.id);
         var index = rooms[socketroom[socket.id]].indexOf(socket.id);
         rooms[socketroom[socket.id]].splice(index, 1);
@@ -106,6 +137,7 @@ io.on('connect', socket => {
         console.log('--------------------');
         console.log(rooms[socketroom[socket.id]]);
     });
+     
 })
 
 

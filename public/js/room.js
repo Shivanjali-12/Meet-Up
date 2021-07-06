@@ -115,6 +115,31 @@ socket.on('user count', count => {
     }
 })
 
+socket.on('display', messages => {
+    if(chatMessages.length!=0)return;
+
+    messages.forEach(msg => {
+        chatRoom.scrollTop = chatRoom.scrollHeight;
+        chatRoom.innerHTML += `<div class="message">
+        <div class="info">
+        <div class="username">${msg.senderName}</div>
+        <div class="time">${msg.time}</div>
+        </div>
+        <div class="content">
+        ${msg.content}
+        </div>
+        </div>`
+
+        // collect chat msges to save it later
+        chatMessages.push({
+            Time: msg.time,
+            Name: msg.senderName,
+            Text: msg.content
+        });
+    });
+    
+})
+
 let peerConnection;
 
 function handleGetUserMediaError(e) {
@@ -203,7 +228,7 @@ function handleVideoOffer(offer, sid, cname, micinf, vidinf, handinf) {
             videoOff.innerHTML = 'Video Off';
             handUp.innerHTML = `<i class="fas fa-hand-paper"></i>`;
 
-            vidCont.classList.add('video-box');handUp.innerHTML = `<i class="fas fa-hand-paper"></i>`;
+            vidCont.classList.add('video-box');
             newvideo.classList.add('video-frame');
             newvideo.autoplay = true;
             newvideo.playsinline = true;
@@ -473,11 +498,13 @@ socket.on('message', (msg, sendername, time) => {
         });
     }
     // collect chat msges to save it later
-    chatMessages.push({
-        Time: time,
-        Name: sendername,
-        Text: msg,
-    });
+    if(sendername != "Bot"){
+        chatMessages.push({
+            Time: time,
+            Name: sendername,
+            Text: msg
+        });
+    }
     chatRoom.scrollTop = chatRoom.scrollHeight;
     chatRoom.innerHTML += `<div class="message">
     <div class="info">
@@ -489,7 +516,6 @@ socket.on('message', (msg, sendername, time) => {
     </div>
     </div>`
 });
-
 
 msgSaveButt.addEventListener("click", (e) => {
     if (chatMessages.length != 0) {
@@ -512,13 +538,13 @@ AttendiesDataButt.addEventListener("click", (e) => {
         a.href =
           "data:text/json;charset=utf-8," +
           encodeURIComponent(JSON.stringify(attendiesData, null, 1));
-        a.download = getDataTimeString() + "-CHAT.txt";
+        a.download = getDataTimeString() + "-ATTENDIES_ACTIVITY.txt";
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         return;
     }
-    alert("No Attendie entered the room yet");
+    alert("No Attendie entered the room after you yet");
 });
 
 //toggle video icons
