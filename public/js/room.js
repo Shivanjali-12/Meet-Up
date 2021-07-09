@@ -1,104 +1,27 @@
 const socket = io();
-const myvideo = document.querySelector("#vd1");
-const roomid = params.get("room");
+
+//Working with the overlay of the room
+const overlayContainer = document.querySelector('#overlay');
+const nameField = document.querySelector('#name-field');
+const continueButton = document.querySelector('.continue-name');
 let username;
 
-const msgSaveButt = document.querySelector('.msg-save');
-const chatRoom = document.querySelector('.chat-cont');
-const sendButton = document.querySelector('.chat-send');
-const messageField = document.querySelector('.chat-input');
-
-const videoContainer = document.querySelector('#vcont');
-const overlayContainer = document.querySelector('#overlay')
-const continueButt = document.querySelector('.continue-name');
-const nameField = document.querySelector('#name-field');
-
-const videoButt = document.querySelector('.novideo');
-const audioButt = document.querySelector('.audio');
-const cutCall = document.querySelector('.cutcall');
-const screenShareButt = document.querySelector('.screenshare');
-const whiteboardButt = document.querySelector('.board-icon');
-const handButt = document.querySelector('.raise-hand');
-const AttendiesDataButt = document.querySelector('.attendies-data');
-
-const clapButt = document.querySelector('.clap');
-const thumbsupButt = document.querySelector('.thumbsup');
-const heartButt = document.querySelector('.heart')
-
-let videoAllowed = 1;
-let audioAllowed = 1;
-let handDown = 1;
-
-let streams = []; //list-for-storing--streams
-let chatMessages = []; // collect chat messages to save it later if want
-let attendiesData = []; // collect time of attendies entering and leaving the room
-
-let micInfo = {};
-let videoInfo = {};
-let handInfo = {};
-
-let videoTrackReceived = {};
-
-let mymuteicon = document.querySelector("#mymuteicon");
-mymuteicon.style.visibility = 'hidden';
-
-let myvideooff = document.querySelector("#myvideooff");
-myvideooff.style.visibility = 'hidden';
-
-let myhandup = document.querySelector("#myhandup");
-myhandup.style.visibility = 'hidden';
-
-const configuration = { iceServers: [{ urls: "stun:stun.stunprotocol.org" }] }
-
-const mediaConstraints = { video: true, audio: true };
-
-let connections = {};
-let cName = {};
-let audioTrackSent = {};
-let videoTrackSent = {};
-
-let mystream, myscreenshare;
-
-document.querySelector('.roomcode').innerHTML = `${roomid}`
-
-function CopyClassText() {
-
-    var textToCopy = document.querySelector('.roomcode');
-    var currentRange;
-    if (document.getSelection().rangeCount > 0) {
-        currentRange = document.getSelection().getRangeAt(0);
-        window.getSelection().removeRange(currentRange);
-    }
-    else {
-        currentRange = false;
-    }
-
-    var CopyRange = document.createRange();
-    CopyRange.selectNode(textToCopy);
-    window.getSelection().addRange(CopyRange);
-    document.execCommand("copy");
-
-    window.getSelection().removeRange(CopyRange);
-
-    if (currentRange) {
-        window.getSelection().addRange(currentRange);
-    }
-
-    document.querySelector(".copycode-button").textContent = "Copied!"
-    setTimeout(()=>{
-        document.querySelector(".copycode-button").textContent = "Copy Code";
-    }, 5000);
-}
-
-
-continueButt.addEventListener('click', () => {
+// Hide Overlay and enter room when Continue Button is clicked
+continueButton.addEventListener('click', () => {
     if (nameField.value == '') return;
-    username = nameField.value;
-    overlayContainer.style.visibility = 'hidden';
-    document.querySelector("#myname").innerHTML = `${username} (You)`;
-    socket.emit("join room", roomid, username);
-})
 
+    // Setting username to the text entered in Name field
+    username = nameField.value;
+
+    overlayContainer.style.visibility = 'hidden';
+
+    //displaying peer name along with video in room
+    document.querySelector("#myname").innerHTML = `${username} (You)`;
+
+    socket.emit("join room", roomid, username);
+});
+
+// Pressing Enter key on keyboard to enter the room 
 nameField.addEventListener("keyup", function (event) {
     if (event.keyCode === 13) {
         event.preventDefault();
@@ -106,7 +29,24 @@ nameField.addEventListener("keyup", function (event) {
     }
 });
 
-socket.on('user count', count => {
+////////////////////////////////////////////////////////////////////////////
+
+// roomid stores the Room Code
+const roomid = params.get("room");
+// Displaying the Room Code in the room window
+document.querySelector('.roomcode').innerHTML = `${roomid}`
+
+// STUN Server for our WebRTC Communication
+const configuration = { iceServers: [{ urls: "stun:stun.stunprotocol.org" }] }
+
+// Setting up media constraints
+const mediaConstraints = { video: true, audio: true };
+
+const videoContainer = document.querySelector('#vcont');   //videoContainer
+const myvideo = document.querySelector("#vd1");            //myOwnVideoStream
+
+//Changing the class for Video Container on the basis of Number of Users
+socket.on('users', count => {
     if (count > 1) {
         videoContainer.className = 'video-cont';
     }
@@ -115,38 +55,43 @@ socket.on('user count', count => {
     }
 })
 
-socket.on('display', messages => {
-    if(chatMessages.length!=0)return;
+// Initially video is allowed, audio is allowed and hand is down
+let videoAllowed = 1;
+let audioAllowed = 1;
+let handDown = 1;
 
-    messages.forEach(msg => {
-        chatRoom.scrollTop = chatRoom.scrollHeight;
-        chatRoom.innerHTML += `<div class="message">
-        <div class="info">
-        <div class="username">${msg.senderName}</div>
-        <div class="time">${msg.time}</div>
-        </div>
-        <div class="content">
-        ${msg.content}
-        </div>
-        </div>`
+// Hence visibility for all these three icons is initially set to HIDDEN
+let mymuteicon = document.querySelector("#mymuteicon");
+mymuteicon.style.visibility = 'hidden';
 
-        // collect chat msges to save it later
-        chatMessages.push({
-            Time: msg.time,
-            Name: msg.senderName,
-            Text: msg.content
-        });
-    });
-    
-})
+let myvideooff = document.querySelector("#myvideooff");
+myvideooff.style.visibility = 'hidden';
+
+let myhandup = document.querySelector("#myhandup");
+myhandup.style.visibility = 'hidden';
+//
+
+let micInfo = {};
+let videoInfo = {};
+let handInfo = {};
+
+let connections = {};
+let cName = {};
+let audioTrackSent = {};
+let videoTrackSent = {};
+let videoTrackReceived = {};
+
+let streams = [];   //list-for-storing-streams
+
+let mystream;
 
 let peerConnection;
 
+// Handling errors that may occur when a user tries to join the room
 function handleGetUserMediaError(e) {
     switch (e.name) {
         case "NotFoundError":
-            alert("Unable to open your call because no camera and/or microphone" +
-                "were found.");
+            alert("No camera and/or microphone were found.");
             break;
         case "SecurityError":
         case "PermissionDeniedError":
@@ -158,12 +103,12 @@ function handleGetUserMediaError(e) {
 
 }
 
-
 function reportError(e) {
     console.log(e);
     return;
 }
 
+// Implementing the video call feature starts here //
 
 function startCall() {
 
@@ -186,10 +131,13 @@ function startCall() {
         .catch(handleGetUserMediaError);
 }
 
+
+socket.on('video-offer', handleVideoOffer);
+
 function handleVideoOffer(offer, sid, cname, micinf, vidinf, handinf) {
 
     cName[sid] = cname;
-    console.log('video offered recevied');
+    console.log('Video offered recevied !!');
     micInfo[sid] = micinf;
     videoInfo[sid] = vidinf;
     handInfo[sid] = handinf;
@@ -197,7 +145,7 @@ function handleVideoOffer(offer, sid, cname, micinf, vidinf, handinf) {
 
     connections[sid].onicecandidate = function (event) {
         if (event.candidate) {
-            console.log('icecandidate fired');
+            console.log('Icecandidate fired !!');
             socket.emit('new icecandidate', event.candidate, sid);
         }
     };
@@ -205,7 +153,7 @@ function handleVideoOffer(offer, sid, cname, micinf, vidinf, handinf) {
     connections[sid].ontrack = function (event) {
 
         if (!document.getElementById(sid)) {
-            console.log('track event fired')
+            console.log('Track event fired !!')
             let vidCont = document.createElement('div');
             let newvideo = document.createElement('video');
             let name = document.createElement('div');
@@ -259,16 +207,13 @@ function handleVideoOffer(offer, sid, cname, micinf, vidinf, handinf) {
             vidCont.appendChild(handUp);
 
             videoContainer.appendChild(vidCont);
-
         }
-
-
     };
 
     connections[sid].onremovetrack = function (event) {
         if (document.getElementById(sid)) {
             document.getElementById(sid).remove();
-            console.log('removed a track');
+            console.log('Removed a track !!');
         }
     };
 
@@ -279,9 +224,7 @@ function handleVideoOffer(offer, sid, cname, micinf, vidinf, handinf) {
                 return connections[sid].setLocalDescription(offer);
             })
             .then(function () {
-
                 socket.emit('video-offer', connections[sid].localDescription, sid);
-
             })
             .catch(reportError);
     };
@@ -290,10 +233,10 @@ function handleVideoOffer(offer, sid, cname, micinf, vidinf, handinf) {
 
     connections[sid].setRemoteDescription(desc)
         .then(() => { return navigator.mediaDevices.getUserMedia(mediaConstraints) })
-        .then((localStream) => { 
+        .then((localStream) => {
             localStream.getTracks().forEach(track => {
                 connections[sid].addTrack(track, localStream);
-                console.log('added local stream to peer')
+                console.log('Added local stream !!')
                 if (track.kind === 'audio') {
                     audioTrackSent[sid] = track;
                     if (!audioAllowed)
@@ -317,33 +260,33 @@ function handleVideoOffer(offer, sid, cname, micinf, vidinf, handinf) {
             socket.emit('video-answer', connections[sid].localDescription, sid);
         })
         .catch(handleGetUserMediaError);
-
-
 }
 
+
+socket.on('new icecandidate', handleNewIceCandidate);
+
 function handleNewIceCandidate(candidate, sid) {
-    console.log('new candidate recieved')
+    console.log('New candidate recieved !!')
     var newcandidate = new RTCIceCandidate(candidate);
 
     connections[sid].addIceCandidate(newcandidate)
         .catch(reportError);
 }
 
+
+socket.on('video-answer', handleVideoAnswer);
+
 function handleVideoAnswer(answer, sid) {
-    console.log('answered the offer')
+    console.log('Answered the offer !!')
     const ans = new RTCSessionDescription(answer);
     connections[sid].setRemoteDescription(ans);
 }
 
-socket.on('video-offer', handleVideoOffer);
 
-socket.on('new icecandidate', handleNewIceCandidate);
-
-socket.on('video-answer', handleVideoAnswer);
-
-
+// Function Call triggered from server.js 
 socket.on('join room', async (conc, cnames, micinfo, videoinfo, handinfo) => {
-    socket.emit('getCanvas');
+    socket.emit('getCanvas');  // for whiteboard
+
     if (cnames)
         cName = cnames;
 
@@ -357,13 +300,14 @@ socket.on('join room', async (conc, cnames, micinfo, videoinfo, handinfo) => {
         handInfo = handinfo;
 
     console.log(cName);
+
     if (conc) {
         await conc.forEach(sid => {
             connections[sid] = new RTCPeerConnection(configuration);
 
             connections[sid].onicecandidate = function (event) {
                 if (event.candidate) {
-                    console.log('icecandidate fired');
+                    console.log('Icecandidate fired !!');
                     socket.emit('new icecandidate', event.candidate, sid);
                 }
             };
@@ -371,7 +315,7 @@ socket.on('join room', async (conc, cnames, micinfo, videoinfo, handinfo) => {
             connections[sid].ontrack = function (event) {
 
                 if (!document.getElementById(sid)) {
-                    console.log('track event fired')
+                    console.log('Track event fired !!')
                     let vidCont = document.createElement('div');
                     let newvideo = document.createElement('video');
                     let name = document.createElement('div');
@@ -424,9 +368,7 @@ socket.on('join room', async (conc, cnames, micinfo, videoinfo, handinfo) => {
                     vidCont.appendChild(handUp);
 
                     videoContainer.appendChild(vidCont);
-
                 }
-
             };
 
             connections[sid].onremovetrack = function (event) {
@@ -456,7 +398,8 @@ socket.on('join room', async (conc, cnames, micinfo, videoinfo, handinfo) => {
 
     }
     else {
-        console.log('waiting for someone to join');
+        //When peer is alone in the room
+        console.log('Waiting for someone to join !!');
         navigator.mediaDevices.getUserMedia(mediaConstraints)
             .then(localStream => {
                 myvideo.srcObject = localStream;
@@ -467,6 +410,7 @@ socket.on('join room', async (conc, cnames, micinfo, videoinfo, handinfo) => {
     }
 })
 
+// Function Call triggered from server.js upon disconnecting
 socket.on('remove peer', sid => {
     if (document.getElementById(sid)) {
         document.getElementById(sid).remove();
@@ -475,89 +419,59 @@ socket.on('remove peer', sid => {
     delete connections[sid];
 })
 
-sendButton.addEventListener('click', () => {
-    const msg = messageField.value;
-    messageField.value = '';
-    socket.emit('message', msg, username, roomid);
-})
+///////////////////////////////////////////////////////////////////////////
 
-messageField.addEventListener("keyup", function (event) {
-    if (event.keyCode === 13) {
-        event.preventDefault();
-        sendButton.click();
+// Called when Button for Copying Room Code is clicked
+function CopyCodeText() {
+    var textToBeCopied = document.querySelector('.roomcode');
+    var currentRange;
+    if (document.getSelection().rangeCount > 0) {
+        currentRange = document.getSelection().getRangeAt(0);
+        window.getSelection().removeRange(currentRange);
     }
-});
-
-socket.on('message', (msg, sendername, time) => {
-    if(msg.length==0)return;
-    // collect attendies data to save it later
-    if(sendername == "Bot"){
-        attendiesData.push({
-            Time: time,
-            Status: msg,
-        });
+    else {
+        currentRange = false;
     }
-    // collect chat msges to save it later
-    if(sendername != "Bot"){
-        chatMessages.push({
-            Time: time,
-            Name: sendername,
-            Text: msg
-        });
+
+    var CopyRange = document.createRange();
+    CopyRange.selectNode(textToBeCopied);
+    window.getSelection().addRange(CopyRange);
+    document.execCommand("copy");
+
+    window.getSelection().removeRange(CopyRange);
+
+    if (currentRange) {
+        window.getSelection().addRange(currentRange);
     }
-    chatRoom.scrollTop = chatRoom.scrollHeight;
-    chatRoom.innerHTML += `<div class="message">
-    <div class="info">
-    <div class="username">${sendername}</div>
-    <div class="time">${time}</div>
-    </div>
-    <div class="content">
-    ${msg}
-    </div>
-    </div>`
-});
 
-msgSaveButt.addEventListener("click", (e) => {
-    if (chatMessages.length != 0) {
-        let a = document.createElement("a");
-        a.href =
-          "data:text/json;charset=utf-8," +
-          encodeURIComponent(JSON.stringify(chatMessages, null, 1));
-        a.download = getDataTimeString() + "-CHAT.txt";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        return;
-    }
-    alert("No chat messages to save");
-});
+    //Changing the text content from "Copy Code" to "Copied!" for few seconds
+    document.querySelector(".copycode-button").textContent = "Copied!"
+    setTimeout(() => {
+        document.querySelector(".copycode-button").textContent = "Copy Code";
+    }, 5000);
+}
 
-AttendiesDataButt.addEventListener("click", (e) => {
-    if (attendiesData.length != 0) {
-        let a = document.createElement("a");
-        a.href =
-          "data:text/json;charset=utf-8," +
-          encodeURIComponent(JSON.stringify(attendiesData, null, 1));
-        a.download = getDataTimeString() + "-ATTENDIES_ACTIVITY.txt";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        return;
-    }
-    alert("No Attendie entered the room after you yet");
-});
+//////////////////////////////////////////////////////////////////////////////////////
 
-//toggle video icons
 
-videoButt.addEventListener('click', () => {
+// Video on/off toggle button
+const videoButton = document.querySelector('.novideo');
+// Mute/Unmute toggle button
+const audioButton = document.querySelector('.audio');
+// Button for Raising-Hand in the room
+const handButton = document.querySelector('.raise-hand');
+
+
+// Adding event listener to video toggle button //
+videoButton.addEventListener('click', () => {
 
     if (videoAllowed) {
         for (let key in videoTrackSent) {
             videoTrackSent[key].enabled = false;
         }
-        videoButt.innerHTML = `<i class="fas fa-video-slash"></i>`;
+        videoButton.innerHTML = `<i class="fas fa-video-slash"></i>`;
         videoAllowed = 0;
-        videoButt.style.backgroundColor = "#b12c2c";
+        videoButton.style.backgroundColor = "#b12c2c";
 
         if (mystream) {
             mystream.getTracks().forEach(track => {
@@ -575,9 +489,9 @@ videoButt.addEventListener('click', () => {
         for (let key in videoTrackSent) {
             videoTrackSent[key].enabled = true;
         }
-        videoButt.innerHTML = `<i class="fas fa-video"></i>`;
+        videoButton.innerHTML = `<i class="fas fa-video"></i>`;
         videoAllowed = 1;
-        videoButt.style.backgroundColor = "#c4c4c4";
+        videoButton.style.backgroundColor = "#c4c4c4";
         if (mystream) {
             mystream.getTracks().forEach(track => {
                 if (track.kind === 'video')
@@ -592,17 +506,16 @@ videoButt.addEventListener('click', () => {
     }
 })
 
-//toggle mute icons 
-
-audioButt.addEventListener('click', () => {
+// Adding event listener to Audio toggle button //
+audioButton.addEventListener('click', () => {
 
     if (audioAllowed) {
         for (let key in audioTrackSent) {
             audioTrackSent[key].enabled = false;
         }
-        audioButt.innerHTML = `<i class="fas fa-microphone-slash"></i>`;
+        audioButton.innerHTML = `<i class="fas fa-microphone-slash"></i>`;
         audioAllowed = 0;
-        audioButt.style.backgroundColor = "#cc4e4e";
+        audioButton.style.backgroundColor = "#cc4e4e";
 
         if (mystream) {
             mystream.getTracks().forEach(track => {
@@ -619,9 +532,9 @@ audioButt.addEventListener('click', () => {
         for (let key in audioTrackSent) {
             audioTrackSent[key].enabled = true;
         }
-        audioButt.innerHTML = `<i class="fas fa-microphone"></i>`;
+        audioButton.innerHTML = `<i class="fas fa-microphone"></i>`;
         audioAllowed = 1;
-        audioButt.style.backgroundColor = "#c4c4c4";
+        audioButton.style.backgroundColor = "#c4c4c4";
 
         if (mystream) {
             mystream.getTracks().forEach(track => {
@@ -637,39 +550,44 @@ audioButt.addEventListener('click', () => {
 })
 
 
-//raise hand
-
-handButt.addEventListener('click', () => {
+// Adding event listener to hand raise button //
+handButton.addEventListener('click', () => {
     if (handDown) {
         myhandup.style.visibility = 'visible';
         handDown = 0;
-        handButt.innerHTML = `<i class="fas fa-hand-rock"></i><span class="tooltiptext">Lower Hand</span>`;
+        handButton.innerHTML = `<i class="fas fa-hand-rock"></i><span class="tooltiptext">Lower Hand</span>`;
         socket.emit('action', 'up');
     }
     else {
         myhandup.style.visibility = 'hidden';
         handDown = 1;
-        handButt.innerHTML = `<i class="fas fa-hand-paper"></i><span class="tooltiptext">Raise Hand</span>`;
+        handButton.innerHTML = `<i class="fas fa-hand-paper"></i><span class="tooltiptext">Raise Hand</span>`;
         socket.emit('action', 'down');
     }
 });
 
-// reactions ---- clap / thumbs-up / heart
 
-clapButt.addEventListener('click', () => {
-    socket.emit('action' , 'clap');
+// Buttons for sending reactions to all peers in the room
+const clapButton = document.querySelector('.clap');
+const thumbsupButton = document.querySelector('.thumbsup');
+const heartButton = document.querySelector('.heart')
+
+
+// Adding event listeners to all reaction buttons
+
+clapButton.addEventListener('click', () => {
+    socket.emit('action', 'clap');
 });
 
-thumbsupButt.addEventListener('click', () => {
+thumbsupButton.addEventListener('click', () => {
     socket.emit('action', 'thumbsup');
 });
 
-heartButt.addEventListener('click', () => {
+heartButton.addEventListener('click', () => {
     socket.emit('action', 'heart');
 });
 
-
-
+///////////////////////////////////////////////////////////////
 
 socket.on('action', (msg, sid) => {
     if (msg == 'mute') {
@@ -704,28 +622,244 @@ socket.on('action', (msg, sid) => {
         document.querySelector(`#hand${sid}`).style.visibility = 'hidden';
         handInfo[sid] = 'off';
     }
-    else if(msg == 'clap') {
-        alert( cName[sid] + " clapped !!");
+    else if (msg == 'clap') {
+        document.querySelector(".reactbypeer").innerHTML = cName[sid] + " Clapped !!";
+        setTimeout(() => {
+            document.querySelector(".reactbypeer").innerHTML = "";
+        }, 2000);
     }
-    else if(msg == 'thumbsup') {
-        alert( cName[sid] + " gave a Thumbs Up !!");
+    else if (msg == 'thumbsup') {
+        document.querySelector(".reactbypeer").innerHTML = cName[sid] + " gave a Thumbs Up !!";
+        setTimeout(() => {
+            document.querySelector(".reactbypeer").innerHTML = "";
+        }, 2000);
     }
-    else if(msg == 'heart') {
-        alert( cName[sid] + " reacted with a heart !!");
+    else if (msg == 'heart') {
+        document.querySelector(".reactbypeer").innerHTML = cName[sid] + " reacted Heart !!";
+        setTimeout(() => {
+            document.querySelector(".reactbypeer").innerHTML = "";
+        }, 2000);
     }
 })
 
+//////////////////////////////////////////////////////////////////
 
 
-//whiteboard feature starts here
+// CHAT FEATURE + SAVING ATTENDIES ACTIVITY FEATURE STARTS HERE //
 
+let chatMessages = [];  // collect chat messages to download them later if needed
+let attendiesData = []; // collect time of attendies entering and leaving the room
+
+const msgSaveButton = document.querySelector('.msg-save');   // button clicking which messages can be downloaded
+const chatRoom = document.querySelector('.chat-cont');       //area on the screen where messages get displayed
+const sendButton = document.querySelector('.chat-send');     //button clicking which message is sent
+const messageField = document.querySelector('.chat-input');  //input area where user types a message
+
+const AttendiesDataButton = document.querySelector('.attendies-data');  //button clicking which attendies activity can be downloaded
+
+//Adding event listener to send message button
+sendButton.addEventListener('click', () => {
+    const msg = messageField.value;
+    messageField.value = '';
+    socket.emit('message', msg, username, roomid);
+})
+
+//When Enter key on keyboard is pressed
+messageField.addEventListener("keyup", function (event) {
+    if (event.keyCode === 13) {
+        event.preventDefault();
+        sendButton.click();
+    }
+});
+
+
+socket.on('message', (msg, sendername, time) => {
+    if (msg.length == 0) return;
+
+    // collect attendies data to save it later
+    if (sendername == "Bot") {
+        attendiesData.push({
+            Time: time,
+            Status: msg,
+        });
+    }
+
+    // collect chat messages to save it later
+    if (sendername != "Bot") {
+        chatMessages.push({
+            Time: time,
+            Name: sendername,
+            Text: msg
+        });
+    }
+
+    //displaying messages in the chat room 
+    chatRoom.scrollTop = chatRoom.scrollHeight;
+    chatRoom.innerHTML += `<div class="message">
+    <div class="info">
+    <div class="username">${sendername}</div>
+    <div class="time">${time}</div>
+    </div>
+    <div class="content">
+    ${msg}
+    </div>
+    </div>`
+});
+
+
+// Displaying messages from the Database to new peer upon joining / existing user rejoins
+// function call triggered from server.js
+socket.on('display', messages => {
+    if (chatMessages.length != 0) return;
+    //looping through all the messages fetched from database
+    messages.forEach(msg => {
+        chatRoom.scrollTop = chatRoom.scrollHeight;
+        chatRoom.innerHTML += `<div class="message">
+        <div class="info">
+        <div class="username">${msg.senderName}</div>
+        <div class="time">${msg.time}</div>
+        </div>
+        <div class="content">
+        ${msg.content}
+        </div>
+        </div>`
+
+        // collecting chat messages to Download them later if needed
+        chatMessages.push({
+            Time: msg.time,
+            Name: msg.senderName,
+            Text: msg.content
+        });
+    });
+})
+
+// Adding event listener to the button clicking which messages get downloaded ( txt file )
+msgSaveButton.addEventListener("click", (e) => {
+    if (chatMessages.length != 0) {
+        let a = document.createElement("a");
+        a.href =
+            "data:text/json;charset=utf-8," +
+            encodeURIComponent(JSON.stringify(chatMessages, null, 1));
+        a.download = getDataTimeString() + "-CHAT.txt";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        return;
+    }
+    alert("No chat messages to save");
+});
+
+// Adding event listener to the button clicking which attendies activity get downloaded ( txt file )
+AttendiesDataButton.addEventListener("click", (e) => {
+    if (attendiesData.length != 0) {
+        let a = document.createElement("a");
+        a.href =
+            "data:text/json;charset=utf-8," +
+            encodeURIComponent(JSON.stringify(attendiesData, null, 1));
+        a.download = getDataTimeString() + "-ATTENDIES_ACTIVITY.txt";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        return;
+    }
+    alert("No Attendie entered the room after you yet");
+});
+
+///////////////////////////////////////////////////////////////
+
+// SCREEN SHARING FEATURE STARTS HERE //
+const screenShareButton = document.querySelector('.screenshare');
+
+let myscreenshare;
+
+screenShareButton.addEventListener('click', () => {
+    // Useful when a user whose video is off shares his screen
+    videoButton.innerHTML = `<i class="fas fa-video"></i>`;
+    videoAllowed = 1;
+    videoButton.style.backgroundColor = "#c4c4c4";
+    myvideooff.style.visibility = 'hidden';
+    socket.emit('action', 'videoon');
+    // otherwise both "video off" text and user's video stream appears simultaneouly upon stopping screen sharing
+    screenShareToggle();
+});
+
+let screenshareEnabled = false;
+
+function screenShareToggle() {
+    let screenMediaPromise;
+    if (!screenshareEnabled) {
+        if (navigator.getDisplayMedia) {
+            screenMediaPromise = navigator.getDisplayMedia({ video: true, audio: true });
+        } else if (navigator.mediaDevices.getDisplayMedia) {
+            screenMediaPromise = navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+        } else {
+            screenMediaPromise = navigator.mediaDevices.getUserMedia({
+                video: { mediaSource: "screen" },
+            });
+        }
+    } else {
+        screenMediaPromise = navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    }
+    screenMediaPromise
+        .then((myscreenshare) => {
+            screenshareEnabled = !screenshareEnabled;
+            for (let key in connections) {
+                const sender = connections[key]
+                    .getSenders()
+                    .find((s) => (s.track ? s.track.kind === "video" : false));
+                sender.replaceTrack(myscreenshare.getVideoTracks()[0]);
+            }
+            myscreenshare.getVideoTracks()[0].enabled = true;
+            const newStream = new MediaStream([
+                myscreenshare.getVideoTracks()[0],
+            ]);
+            myvideo.srcObject = newStream;
+            myvideo.muted = true;
+            mystream = newStream;
+
+            screenShareButton.innerHTML = (screenshareEnabled
+                ? `<i class="fas fa-desktop"></i><span class="tooltiptext">Stop Share Screen</span>`
+                : `<i class="fas fa-desktop"></i><span class="tooltiptext">Share Screen</span>`
+            );
+            myscreenshare.getVideoTracks()[0].onended = function () {
+                if (screenshareEnabled) screenShareToggle();
+            };
+        })
+        .catch((e) => {
+            alert("Unable to share screen:" + e.message);
+            console.error(e);
+        });
+}
+
+// SCREEN SHARING FEATURE ENDS HERE //
+
+
+//WHITEBOARD FEATURE STARTS HERE //
+const whiteboardButton = document.querySelector('.board-icon');
 const whiteboardCont = document.querySelector('.whiteboard-cont');
+
+//Adding event listener to Whiteboard button
+whiteboardButton.addEventListener('click', () => {
+    if (boardVisisble) {
+        whiteboardButton.innerHTML = `<i class="fas fa-chalkboard-teacher"></i><span class="tooltiptext">Open Whiteboard</span>`;
+        whiteboardCont.style.visibility = 'hidden';
+        boardVisisble = false;
+    }
+    else {
+        whiteboardButton.innerHTML = `<i class="fas fa-chalkboard-teacher"></i><span class="tooltiptext">Close Whiteboard</span>`;
+        whiteboardCont.style.visibility = 'visible';
+        boardVisisble = true;
+    }
+})
+
+// setting up oue whiteboard canvas starts here //
+
 const canvas = document.querySelector("#whiteboard");
 const ctx = canvas.getContext('2d');
 
+// Initially whiteboard is'nt visible
 let boardVisisble = false;
-
-whiteboardCont.style.visibility = 'hidden';
+whiteboardCont.style.visibility = 'hidden';  
 
 let isDrawing = 0;
 let x = 0;
@@ -744,7 +878,7 @@ function fitToContainer(canvas) {
 
 fitToContainer(canvas);
 
-//getCanvas call is under join room call
+// getCanvas call is made under the join room call
 socket.on('getCanvas', url => {
     let img = new Image();
     img.onload = start;
@@ -754,47 +888,22 @@ socket.on('getCanvas', url => {
         ctx.drawImage(img, 0, 0);
     }
 
-    console.log('got canvas', url)
+    console.log('Got canvas', url);
 })
 
+// Setting up color options
 function setColor(newcolor) {
     color = newcolor;
     drawsize = 3;
 }
 
+// Setting up eraser
 function setEraser() {
     color = "white";
     drawsize = 20;
 }
 
-//might remove this
-function reportWindowSize() {
-    fitToContainer(canvas);
-}
-
-window.onresize = reportWindowSize;
-//
-
-function saveBoard() {
-    let link = document.createElement("a");
-    link.download = getDataTimeString() + "WHITEBOARD.png";
-    link.href = canvas.toDataURL();
-    link.click();
-    link.delete;
-}
-
-function clearBoard() {
-    if (window.confirm('Are you sure you want to clear board?')) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        socket.emit('store canvas', canvas.toDataURL());
-        socket.emit('clearBoard');
-    }
-    else return;
-}
-
-socket.on('clearBoard', () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-})
+// Setting up the whiteboard drawing functionality starts here //
 
 function draw(newx, newy, oldx, oldy) {
     ctx.strokeStyle = color;
@@ -847,261 +956,197 @@ socket.on('draw', (newX, newY, prevX, prevY, color, size) => {
     drawRemote(newX, newY, prevX, prevY);
 })
 
+// Setting up the whiteboard drawing functionality ends here //
 
-whiteboardButt.addEventListener('click', () => {
-    if (boardVisisble) {
-        whiteboardButt.innerHTML = `<i class="fas fa-chalkboard-teacher"></i><span class="tooltiptext">Open Whiteboard</span>`;
-        whiteboardCont.style.visibility = 'hidden';
-        boardVisisble = false;
-    }
-    else {
-        whiteboardButt.innerHTML = `<i class="fas fa-chalkboard-teacher"></i><span class="tooltiptext">Close Whiteboard</span>`;
-        whiteboardCont.style.visibility = 'visible';
-        boardVisisble = true;
-    }
-})
-
-
-// screensharing feature starts
-
-screenShareButt.addEventListener('click', () => {
-    videoButt.innerHTML = `<i class="fas fa-video"></i>`;
-    videoAllowed = 1;
-    videoButt.style.backgroundColor = "#c4c4c4";
-    myvideooff.style.visibility = 'hidden';
-    socket.emit('action', 'videoon');
-    screenShareToggle();
-});
-
-let screenshareEnabled = false;
-
-function screenShareToggle() {
-    let screenMediaPromise;
-    if (!screenshareEnabled) {
-        if (navigator.getDisplayMedia) {
-            screenMediaPromise = navigator.getDisplayMedia({ video: true, audio: true });
-        } else if (navigator.mediaDevices.getDisplayMedia) {
-            screenMediaPromise = navigator.mediaDevices.getDisplayMedia({ video: true, audio:true });
-        } else {
-            screenMediaPromise = navigator.mediaDevices.getUserMedia({
-                video: { mediaSource: "screen" },
-            });
-        }
-    } else {
-        screenMediaPromise = navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    }
-    screenMediaPromise
-        .then((myscreenshare) => {
-            screenshareEnabled = !screenshareEnabled;
-            for (let key in connections) {
-                const sender = connections[key]
-                    .getSenders()
-                    .find((s) => (s.track ? s.track.kind === "video" : false));
-                sender.replaceTrack(myscreenshare.getVideoTracks()[0]);
-            }
-            myscreenshare.getVideoTracks()[0].enabled = true;
-            const newStream = new MediaStream([
-                myscreenshare.getVideoTracks()[0], 
-            ]);
-            myvideo.srcObject = newStream;
-            myvideo.muted = true;
-            mystream = newStream;
-            screenShareButt.innerHTML = (screenshareEnabled 
-                ? `<i class="fas fa-desktop"></i><span class="tooltiptext">Stop Share Screen</span>`
-                : `<i class="fas fa-desktop"></i><span class="tooltiptext">Share Screen</span>`
-            );
-            myscreenshare.getVideoTracks()[0].onended = function() {
-                if (screenshareEnabled) screenShareToggle();
-            };
-        })
-        .catch((e) => {
-            alert("Unable to share screen:" + e.message);
-            console.error(e);
-        });
+// For saving the whiteboard as an image ( png )
+function saveBoard() {
+    let link = document.createElement("a");
+    link.download = getDataTimeString() + "WHITEBOARD.png";
+    link.href = canvas.toDataURL();
+    link.click();
+    link.delete;
 }
 
-//screen sharing feature ends
+// For clearing the entire board in one click
+function clearBoard() {
+    if (window.confirm('Are you sure you want to clear board?')) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        socket.emit('store canvas', canvas.toDataURL());
+        socket.emit('clearBoard');
+    }
+    else return;
+}
 
-
-cutCall.addEventListener('click', () => {
-    location.href = '/';
+// Board is cleared for all the peers
+socket.on('clearBoard', () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 })
 
+///////////////////////////////////////////////////////////////
 
-
-
+// OWN VIDEO STREAM RECORDING + SCREEN RECORDING FEATURE STARTS HERE //
 
 //sharing screen to recorder
-
 function shareScreen() {
-    if ( this.userMediaAvailable() ) {
-        recordedStream =  navigator.mediaDevices.getDisplayMedia( { 
+    if (this.userMediaAvailable()) {
+        recordedStream = navigator.mediaDevices.getDisplayMedia({
             video: true,
             audio: true
-        } );
+        });
 
         return recordedStream;
     }
 
     else {
-        throw new Error( 'User media not available' );
+        throw new Error('User media not available');
     }
 }
 
 function userMediaAvailable() {
-    return !!( navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia );
+    return !!(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
 }
 
+// RECORDING ENTIRE SCREEN //
 
-//record entire screen feature starts here
+const recordScreenButton = document.querySelector('.record-screen');
+let isScreenRecording = false; // initially screen is not being recorded
 
-const recordScreenBtn = document.querySelector('.record-screen');
-let isScreenRecording = false;
-
-recordScreenBtn.addEventListener("click", (e) => {
+recordScreenButton.addEventListener("click", (e) => {
     if (isScreenRecording) {
-        recordScreenBtn.innerHTML = `<i class="fas fa-record-vinyl"></i><span class="tooltiptext">Record Entire Screen</span>`;
-        recordScreenBtn.style.color = "#9958e6";
-        isScreenRecording=false;
+        recordScreenButton.innerHTML = `<i class="fas fa-record-vinyl"></i><span class="tooltiptext">Record Entire Screen</span>`;
+        recordScreenButton.style.color = "#9958e6";
+        isScreenRecording = false;
         stopRecording();
-    } 
+    }
     else {
-        shareScreen().then( ( screenStream ) => {
-            startRecording( screenStream ); 
-            isScreenRecording=true;
-            recordScreenBtn.innerHTML = (isScreenRecording 
+        shareScreen().then((screenStream) => {
+            startRecording(screenStream);
+            isScreenRecording = true;
+            recordScreenButton.innerHTML = (isScreenRecording
                 ? `<i class="fas fa-record-vinyl"></i><span class="tooltiptext">Stop Recording</span>`
                 : `<i class="fas fa-record-vinyl"></i><span class="tooltiptext">Record Entire Screen</span>`
             );
-            recordScreenBtn.style.color = (isScreenRecording 
+            recordScreenButton.style.color = (isScreenRecording
                 ? "red"
                 : "#9958e6"
             );
-            screenStream.getVideoTracks()[0].onended = function() {
-                if (isScreenRecording){
-                    isScreenRecording=false;
-                    recordScreenBtn.innerHTML = `<i class="fas fa-record-vinyl"></i><span class="tooltiptext">Record Entire Screen</span>`;
-                    recordScreenBtn.style.color = "#9958e6";
+            screenStream.getVideoTracks()[0].onended = function () {
+                if (isScreenRecording) {
+                    isScreenRecording = false;
+                    recordScreenButton.innerHTML = `<i class="fas fa-record-vinyl"></i><span class="tooltiptext">Record Entire Screen</span>`;
+                    recordScreenButton.style.color = "#9958e6";
                 }
-            };  
+            };
         })
         .catch((e) => {
             alert("Unable to record screen:" + e.message);
             console.error(e);
-        });       
+        });
     }
 });
 
-//record-my-stream feature starts here
+// RECORDING OWN VIDEO STREAM //
 
-const recordStreamBtn = document.querySelector('.record');
-let isStreamRecording = false;
+const recordStreamButton = document.querySelector('.record');
+let isStreamRecording = false; // initially video stream is not being recorded
 
-recordStreamBtn.addEventListener("click", (e) => {
+recordStreamButton.addEventListener("click", (e) => {
     if (isStreamRecording) {
-        recordStreamBtn.innerHTML = `<i class="fas fa-camera"></i><span class="tooltiptext">Record Your Video</span>`;
-        recordStreamBtn.style.color = "#9958e6";
-        isStreamRecording=false;
+        recordStreamButton.innerHTML = `<i class="fas fa-camera"></i><span class="tooltiptext">Record Your Video</span>`;
+        recordStreamButton.style.color = "#9958e6";
+        isStreamRecording = false;
         stopRecording();
     } else {
-        recordStreamBtn.innerHTML = `<i class="fas fa-camera"></i><span class="tooltiptext">Stop Recording</span>`;
-        recordStreamBtn.style.color = "red";
-        isStreamRecording=true;
+        recordStreamButton.innerHTML = `<i class="fas fa-camera"></i><span class="tooltiptext">Stop Recording</span>`;
+        recordStreamButton.style.color = "red";
+        isStreamRecording = true;
         startRecording(mystream);
     }
 });
 
-
-  
- //Start Recording
-
-  function startRecording(stream) {
+//startRecording function definition ( using MediaRecorder )
+function startRecording(stream) {
     recordedBlobs = [];
     let options = { mimeType: "video/webm;codecs=vp9,opus" };
 
     if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-      console.error(`${options.mimeType} is not supported`);
-      options = { mimeType: "video/webm;codecs=vp8,opus" };
-      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
         console.error(`${options.mimeType} is not supported`);
-        options = { mimeType: "video/webm" };
+        options = { mimeType: "video/webm;codecs=vp8,opus" };
         if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-          console.error(`${options.mimeType} is not supported`);
-          options = { mimeType: "audio/webm" };
-          if (!MediaRecorder.isTypeSupported(options.mimeType)) {
             console.error(`${options.mimeType} is not supported`);
-            options = { mimeType: "" };
-          }
+            options = { mimeType: "video/webm" };
+            if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                console.error(`${options.mimeType} is not supported`);
+                options = { mimeType: "audio/webm" };
+                if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                    console.error(`${options.mimeType} is not supported`);
+                    options = { mimeType: "" };
+                }
+            }
         }
-      }
     }
-  
+
     try {
-      mediaRecorder = new MediaRecorder(stream, options);
+        mediaRecorder = new MediaRecorder(stream, options);
     } catch (err) {
-      console.error("Exception while creating MediaRecorder:", err);
-      alert(err);
-      return;
+        console.error("Exception while creating MediaRecorder:", err);
+        alert(err);
+        return;
     }
-  
+
     console.log("Created MediaRecorder", mediaRecorder, "with options", options);
     mediaRecorder.onstop = (event) => {
-      console.log("MediaRecorder stopped: ", event);
-      console.log("MediaRecorder Blobs: ", recordedBlobs);
+        console.log("MediaRecorder stopped: ", event);
+        console.log("MediaRecorder Blobs: ", recordedBlobs);
 
-      downloadRecordedStream();
+        downloadRecordedStream();
 
     };
-  
+
     mediaRecorder.ondataavailable = handleDataAvailable;
     mediaRecorder.start();
     console.log("MediaRecorder started", mediaRecorder);
 }
-  
-//Stop recording
 
+//StopRecording function definition
 function stopRecording() {
     mediaRecorder.stop();
 }
-  
-  
-//handling data
 
+//handleDataAvailable function definition
 function handleDataAvailable(event) {
     console.log("handleDataAvailable", event);
     if (event.data && event.data.size > 0) {
-      recordedBlobs.push(event.data);
+        recordedBlobs.push(event.data);
     }
 }
-  
-//Download recorded stream
 
+//DownloadRecordedStream function definition ( webm file )
 function downloadRecordedStream() {
     try {
-      const blob = new Blob(recordedBlobs, { type: "video/webm" });
-      const recFileName = getDataTimeString() + "-REC.webm";
-      const blobFileSize = bytesToSize(blob.size);
+        const blob = new Blob(recordedBlobs, { type: "video/webm" });
+        const recFileName = getDataTimeString() + "-REC.webm";
+        const blobFileSize = bytesToSize(blob.size);
 
-
-  
-      // save the recorded file to device
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.style.display = "none";
-      a.href = url;
-      a.download = recFileName;
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(() => {
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-      }, 100);
+        // save the recorded file to device
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.style.display = "none";
+        a.href = url;
+        a.download = recFileName;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }, 100);
     }
     catch (err) {
-      alert(err);
+        alert(err);
     }
 }
 
+//getDataTimeString function definition
 function getDataTimeString() {
     const d = new Date();
     const date = d.toISOString().split("T")[0];
@@ -1109,6 +1154,7 @@ function getDataTimeString() {
     return `${date}-${time}`;
 }
 
+//bytesToSize function definition
 function bytesToSize(bytes) {
     let sizes = ["Bytes", "KB", "MB", "GB", "TB"];
     if (bytes == 0) return "0 Byte";
@@ -1116,54 +1162,62 @@ function bytesToSize(bytes) {
     return Math.round(bytes / Math.pow(1024, i), 2) + " " + sizes[i];
 }
 
+////////////////////////////////////////////////////////////////////////
 
+// MUTE / HIDE INCOMING STREAM FEATURE STARTS HERE //
 
+const muteEveryoneButton = document.querySelector('.mute-everyone');
+const hideEveryoneButton = document.querySelector('.hide-everyone');
 
-// mute / hide everyone's Incoming Stream for you only
-
-const muteEveryoneBtn = document.querySelector('.mute-everyone');
-const hideEveryoneBtn = document.querySelector('.hide-everyone');
-
+// initial states
 let ishidden = 0;
 let ismuted = 0;
 
-muteEveryoneBtn.addEventListener('click', () => {
-    if(ismuted==0){
+// Adding event listener to mute everyone button //
+muteEveryoneButton.addEventListener('click', () => {
+    if (ismuted == 0) {
         ismuted = 1;
-        muteEveryoneBtn.innerHTML = `<i class="fas fa-microphone-slash"></i><span class="tooltiptext">Unmute Incoming Audios</span>`;
-        muteEveryoneBtn.style.color = "red";
-        for(let i=0; i<streams.length; i++){
+        muteEveryoneButton.innerHTML = `<i class="fas fa-microphone-slash"></i><span class="tooltiptext">Unmute Incoming Audios</span>`;
+        muteEveryoneButton.style.color = "red";
+        for (let i = 0; i < streams.length; i++) {
             streams[i].getAudioTracks()[0].enabled = false;
         }
     }
-    else{
+    else {
         ismuted = 0;
-        muteEveryoneBtn.innerHTML = `<i class="fas fa-microphone-slash"></i><span class="tooltiptext">Mute Incoming Audios</span>`;
-        muteEveryoneBtn.style.color = "#9958e6";
-        for(let i=0; i<streams.length; i++){
+        muteEveryoneButton.innerHTML = `<i class="fas fa-microphone-slash"></i><span class="tooltiptext">Mute Incoming Audios</span>`;
+        muteEveryoneButton.style.color = "#9958e6";
+        for (let i = 0; i < streams.length; i++) {
             streams[i].getAudioTracks()[0].enabled = true;
         }
     }
 });
 
-hideEveryoneBtn.addEventListener('click', () => {
-    if(ishidden==0){
+// Adding event listener to hide everyone button //
+hideEveryoneButton.addEventListener('click', () => {
+    if (ishidden == 0) {
         ishidden = 1;
-        hideEveryoneBtn.innerHTML = `<i class="fas fa-video-slash"></i><span class="tooltiptext">Unhide Incoming Vedios</span>`;
-        hideEveryoneBtn.style.color = "red";
-        for(let i=0; i<streams.length; i++){
+        hideEveryoneButton.innerHTML = `<i class="fas fa-video-slash"></i><span class="tooltiptext">Unhide Incoming Videos</span>`;
+        hideEveryoneButton.style.color = "red";
+        for (let i = 0; i < streams.length; i++) {
             streams[i].getVideoTracks()[0].enabled = false;
         }
     }
-    else{
+    else {
         ishidden = 0;
-        hideEveryoneBtn.innerHTML = `<i class="fas fa-video-slash"></i><span class="tooltiptext">Hide Incoming Vedios</span>`;
-        hideEveryoneBtn.style.color = "#9958e6";
-        for(let i=0; i<streams.length; i++){
+        hideEveryoneButton.innerHTML = `<i class="fas fa-video-slash"></i><span class="tooltiptext">Hide Incoming Videos</span>`;
+        hideEveryoneButton.style.color = "#9958e6";
+        for (let i = 0; i < streams.length; i++) {
             streams[i].getVideoTracks()[0].enabled = true;
         }
     }
 });
 
+//////////////////////////////////////////////////////////////
 
+// Button for leaving the room //
+const cutCall = document.querySelector('.cutcall');
 
+cutCall.addEventListener('click', () => {
+    location.href = '/';
+})

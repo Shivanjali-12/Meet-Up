@@ -1,3 +1,5 @@
+// message schema for saving to database is defined here //
+
 const mongoose = require("mongoose"),
   { Schema } = require("mongoose");
 const messageSchema = new Schema({
