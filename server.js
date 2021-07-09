@@ -2,7 +2,10 @@
 const path = require('path');
 const express = require('express')
 const http = require('http')
-const moment = require('moment'); // for playing with date and time 
+
+const moment = require('moment-timezone'); // for playing with date and time and setting default time zone as well
+// timezone set to "Asia/Kolkata" in subsequent use of moment //
+
 const socketio = require('socket.io');
 require('dotenv').config();
 const mongoose = require('mongoose'); // for using MongoDB database for saving chat messages
@@ -10,7 +13,7 @@ const mongoDB = 'mongodb+srv://' + process.env.ADMIN + ':' + process.env.PASSWOR
 
 // CONNECTING TO DATABASE //
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
-    console.log('connected')
+    console.log('database connected');
 }).catch(err => console.log(err))
 
 const Msg = require("./models/messages.js"); // messages.js has the message schema defined
@@ -40,7 +43,7 @@ io.on('connect', socket => {
         if (rooms[roomid] && rooms[roomid].length > 0) {
             rooms[roomid].push(socket.id);
             //Notifying other peers that a new peer has joined the room via chat update by "Bot"
-            socket.to(roomid).emit('message', `${username} joined the room.`, 'Bot', moment().format(
+            socket.to(roomid).emit('message', `${username} joined the room.`, 'Bot', moment.tz("Asia/Kolkata").format(
                 "MMMM Do YYYY, h:mm a"
             ));
 
@@ -96,13 +99,13 @@ io.on('connect', socket => {
         let messageAttributes = {
             content: msg,
             senderName: username,
-            time: moment().format("MMMM Do YYYY, h:mm a"),
+            time: moment.tz("Asia/Kolkata").format("MMMM Do YYYY, h:mm a"),
             roomId: roomid
         },
         m = new Msg(messageAttributes);
         m.save()
             .then(() => {
-                io.to(roomid).emit('message', msg, username, moment().format("MMMM Do YYYY, h:mm a")
+                io.to(roomid).emit('message', msg, username, moment.tz("Asia/Kolkata").format("MMMM Do YYYY, h:mm a")
             );
         })
         .catch(error => console.log(`error: ${error.message}`));
@@ -130,7 +133,7 @@ io.on('connect', socket => {
     socket.on('disconnect', () => {
         if (!socketroom[socket.id]) return;
         // notifying other peers in the room via a message in chat by "Bot" //
-        socket.to(socketroom[socket.id]).emit('message', `${socketname[socket.id]} left the room.`, `Bot`, moment().format(
+        socket.to(socketroom[socket.id]).emit('message', `${socketname[socket.id]} left the room.`, `Bot`, moment.tz("Asia/Kolkata").format(
             "MMMM Do YYYY, h:mm a"
         ));
 
@@ -143,5 +146,6 @@ io.on('connect', socket => {
     });
 })
 
+// listening on port //
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => console.log(`Server is Up and Running on Port ${PORT}`));

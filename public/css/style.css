@@ -9,6 +9,15 @@
   font-family: "Open Sans", sans-serif;
 }
 
+body {
+  background-color: #ffffff;
+
+}
+
+.landing {
+  background-image: linear-gradient(#fff, #fff, #fff, #9958e6);
+  min-height: 100vh;
+}
 /* Styling the Logo on the Landing Page */
 navbar .logo {
   font-size: 30px;
@@ -45,12 +54,12 @@ navbar .logo {
   font-weight: bold;
   text-align: center;
   padding: 10px 20px;
-  border-radius: 10px;
+  border-radius: 15px;
   border: 2px solid #9958e6;
-  transition: 0.3s;
+  transition: 0.2s;
 }
 .main .create-join .createroom-butt:hover {
-  background-color: white;
+  background: none;
   border: 2px solid #9958e6;
   color: #9958e6;
   cursor: pointer;
@@ -71,16 +80,16 @@ navbar .logo {
   border-bottom: 3px solid #232931;
   font-weight: bold;
   outline: none;
+  background: none;
 }
 .main .create-join .joinroom {
   margin-top: 5px;
   text-align: right;
   color: #9958e6;
-  transition: opacity 0.3s;
 }
 .main .create-join .joinroom:hover {
   cursor: pointer;
-  opacity: 0.7;
+  color: #4a464e;
 }
 
 /* Styling the video content and toggle buttons */
@@ -137,14 +146,14 @@ navbar .logo {
 .overlay .box {
   width: 40%;
   margin: 0 auto;
-  height: 200px;
+  height: 210px;
   background-color: #ffffff;
-  margin-top: 100px;
-  border-radius: 15px;
+  margin-top: 150px;
+  border-radius: 20px;
   text-align: center;
 }
 .overlay .box .head-name {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   padding-top: 20px;
   text-align: center;
 }
@@ -153,23 +162,26 @@ navbar .logo {
   border: 0;
   font-weight: bold;
   padding: 10px;
-  width: 90%;
+  width: 80%;
   border-bottom: 3px solid #232931;
   outline: none;
 }
 .overlay .box .continue-name {
-  border: none;
+  width: 80%;
   margin-top: 30px;
   color: #ffffff;
+  font-size: 1rem;
   font-weight: bold;
   background-color: #9958e6;
-  padding: 12px 20px;
-  border-radius: 10px;
-  transition: opacity 0.3s;
+  padding: 10px 20px;
+  border: 2px solid #9958e6;
+  border-radius: 12px;
 }
 .overlay .box .continue-name:hover {
-  opacity: 0.7;
   cursor: pointer;
+  background-color: #fff;
+  border: 2px solid #9958e6;
+  color: #9958e6;
 }
 /* Styling of room overlay page ends here */
 

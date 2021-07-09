@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Meet-Up</title>
-    <link href="favicon.ico"/>
+    <link href="favicon.ico" />
 
     <!-- Linking CSS Stylesheet File -->
     <link rel="stylesheet" href="css/style.css">
@@ -18,33 +18,35 @@
 </head>
 
 <body>
-    <!-- Navbar section includes the logo -->
-    <navbar>
-        <div class="logo"><i class="fas fa-users"></i> Meet-Up</div>
-    </navbar>
+    <div class="landing">
+        <!-- Navbar section includes the logo -->
+        <navbar>
+            <div class="logo"><i class="fas fa-users"></i> Meet-Up</div>
+        </navbar>
 
-    <div class="main">
-        <div class="create-join">
-            <h1 class="head">Welcome to Meet-Up</h1>
-            <button id="createroom" class="createroom-butt">Create Room</button>
+        <div class="main">
+            <div class="create-join">
+                <h1 class="head">Welcome to Meet-Up</h1>
+                <button id="createroom" class="createroom-butt">Create Room</button>
 
-            <!-- Option for joining an existing room -->
-            <div class="subtext">Already have a Room code ?</div>
-            <input type="text" name="room" spellcheck="false" placeholder="Enter The Code Here" id="roomcode"
-                class="roomcode">
+                <!-- Option for joining an existing room -->
+                <div class="subtext">Already have a Room code ?</div>
+                <input type="text" name="room" spellcheck="false" placeholder="Enter The Code Here" id="roomcode"
+                    class="roomcode">
 
-            <div class="joinroom" id="joinroom">
-                <i class="fas fa-long-arrow-alt-right fa-4x"></i>
+                <div class="joinroom" id="joinroom">
+                    <i class="fas fa-long-arrow-alt-right fa-4x"></i>
+                </div>
             </div>
-        </div>
 
-        <div class="video-cont">
-            <!-- Displaying our video the same way it'll look upon joining the room -->
-            <video class="video-self" autoplay muted playsinline></video>
+            <div class="video-cont">
+                <!-- Displaying our video the same way it'll look upon joining the room -->
+                <video class="video-self" autoplay muted playsinline></video>
 
-            <div class="settings">
-                <div class="device" id="mic"><i class="fas fa-microphone"></i></div>
-                <div class="device" id="webcam"><i class="fas fa-video"></i></div>
+                <div class="settings">
+                    <div class="device" id="mic"><i class="fas fa-microphone"></i></div>
+                    <div class="device" id="webcam"><i class="fas fa-video"></i></div>
+                </div>
             </div>
         </div>
     </div>

@@ -100,7 +100,6 @@ function handleGetUserMediaError(e) {
             alert("Error opening your camera and/or microphone: " + e.message);
             break;
     }
-
 }
 
 function reportError(e) {
@@ -137,7 +136,7 @@ socket.on('video-offer', handleVideoOffer);
 function handleVideoOffer(offer, sid, cname, micinf, vidinf, handinf) {
 
     cName[sid] = cname;
-    console.log('Video offered recevied !!');
+    console.log('Video offer recevied !!');
     micInfo[sid] = micinf;
     videoInfo[sid] = vidinf;
     handInfo[sid] = handinf;
@@ -448,7 +447,7 @@ function CopyCodeText() {
     document.querySelector(".copycode-button").textContent = "Copied!"
     setTimeout(() => {
         document.querySelector(".copycode-button").textContent = "Copy Code";
-    }, 5000);
+    }, 3000);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -626,19 +625,19 @@ socket.on('action', (msg, sid) => {
         document.querySelector(".reactbypeer").innerHTML = cName[sid] + " Clapped !!";
         setTimeout(() => {
             document.querySelector(".reactbypeer").innerHTML = "";
-        }, 2000);
+        }, 3000);
     }
     else if (msg == 'thumbsup') {
         document.querySelector(".reactbypeer").innerHTML = cName[sid] + " gave a Thumbs Up !!";
         setTimeout(() => {
             document.querySelector(".reactbypeer").innerHTML = "";
-        }, 2000);
+        }, 3000);
     }
     else if (msg == 'heart') {
         document.querySelector(".reactbypeer").innerHTML = cName[sid] + " reacted Heart !!";
         setTimeout(() => {
             document.querySelector(".reactbypeer").innerHTML = "";
-        }, 2000);
+        }, 3000);
     }
 })
 
