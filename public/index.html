@@ -20,10 +20,16 @@
 <body>
     <div class="landing">
         <!-- Navbar section includes the logo -->
-        <navbar>
-            <div class="logo"><i class="fas fa-users"></i> Meet-Up</div>
-        </navbar>
+        <div class="logo"><i class="fas fa-users"></i> Meet-Up</div>
+        <div class="dropdown">
+            <button class="dropbutton">Existing Rooms</button>
+            <div class="dropdown-content">
+                <li>Friends</li>
+                <li>Family</li>
+            </div>
+        </div>
 
+        <!-- Main section starts here -->
         <div class="main">
             <div class="create-join">
                 <h1 class="head">Welcome to Meet-Up</h1>
@@ -53,6 +59,7 @@
 
     <!-- Linking custom landing.js javascript file -->
     <script src="js/landing.js"></script>
+    <script src="../server.js"></script>
 </body>
 
 </html>
