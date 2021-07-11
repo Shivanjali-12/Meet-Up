@@ -19,7 +19,21 @@
 - **Hide Incoming Videos** ❌ ( All other participants' video will be hidden for you but not for others )
 - **Send Reactions** ( Notifies all the participants with a beep and Your reaction ( ❤️, 👍 , 👏 ) is visible to all the participants for few seconds and then disappears )
 - **Download Attendees Activity** 📥 ( Information about which participant joined the current conference at what time and left at what time can be downloaded as a .txt file )
-- Completely **responsive** for mobile devices ✔️
+- Completely **Responsive** for mobile devices ✔️
+
+# *IDEA* behind adding some Paricular Features / Driving Forces
+**1. Download Chat Feature**
+If a professor uses the product and he/she wants to save all the "in chat" discussions locally in his system, he/she can simply download the chat messages along with date, time and sender's name in one click ( instead of copy-pasting the entire chat )
+**2. Whiteboard**
+In the era of everything being online, a feature like collaborative whiteboard is surely a useful one. It can be used by anyone to explain stuff to other participants in the room or simply as a relaxation tool ( playing scribble or doodling )
+* *Everything on the board can be easily downloaded as an image in one click. A better UX as now the user doesn't need to take screenshots ( if needed )*
+**3. Video Stream Recording**
+There might be a case where an instructor wants to record the session but not the entire screen, just the content of the session which he delivered. That's where the necessity of this feature arrises. 
+**4. Hiding Incoming Videos / Muting Incoming Audios**
+Surely a very useful feature in *Microsoft Teams* as it ensures that we can opt to hide/unhide ( mute/unmute ) remote video streams according to our internet connection / distraction level.
+*Useful when a speaker in the room wants to avoid any kind of disturbance.*
+**5. Download Attendees Activity**
+The person who starts the meeting / creates the room may want to keep a record of which participant joined/left at what time, or, simply track the attendance. This feature allows to download all this activity in one click.
 
 ## Deployment 
 🚀 Here's the link of the web application ( deployed on heroku ) 🚀
@@ -99,7 +113,7 @@ npm install
 - You'll have to setup your mongoDB database for the project. For that create an account on [MongoDB Atlas](https://www.mongodb.com/). 
   Remember your credentials like **Username** & **Password**.
 - Create a database. Remember the name of your **Database**.
-- Create a .env file in the root directory of the project using the touch command.
+- Create a .env file in the root directory of the project using the touch command in your terminal
 ```bash
 touch .env
 ```
@@ -115,7 +129,8 @@ node server.js
 ```
 
 ## Next plans for "Meet-Up"
-#### Try to refine the features from ***"Improvement"*** point of view and work on implementing the features planned earlier ( listed below )
-- Adding EmojiPicker in chat
-- Feature for Setting a custom Room Name corresponding to Room Code every time a new Room is created
-- Adding user authentication ➡️ displaying the list of Rooms a user is part of on the Landing page itself
+- Try to refine the features from ***"Improvement"*** point of view
+- Work on implementing the features planned earlier ( listed below )
+1. Adding EmojiPicker in chat
+2. Feature for Setting a custom Room Name corresponding to Room Code every time a new Room is created
+3. Adding user authentication ➡️ displaying the list of Rooms a user is part of on the Landing page itself
