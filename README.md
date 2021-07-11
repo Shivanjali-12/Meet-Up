@@ -21,18 +21,20 @@
 - **Download Attendees Activity** 📥 ( Information about which participant joined the current conference at what time and left at what time can be downloaded as a .txt file )
 - Completely **Responsive** for mobile devices ✔️
 
-# *IDEA* behind adding some Paricular Features / Driving Forces
-**1. Download Chat Feature**
+## *IDEA* behind adding some Paricular Features / Driving Forces
+### **1. Download Chat Feature**
 If a professor uses the product and he/she wants to save all the "in chat" discussions locally in his system, he/she can simply download the chat messages along with date, time and sender's name in one click ( instead of copy-pasting the entire chat )
-**2. Whiteboard**
-In the era of everything being online, a feature like collaborative whiteboard is surely a useful one. It can be used by anyone to explain stuff to other participants in the room or simply as a relaxation tool ( playing scribble or doodling )
-* *Everything on the board can be easily downloaded as an image in one click. A better UX as now the user doesn't need to take screenshots ( if needed )*
-**3. Video Stream Recording**
-There might be a case where an instructor wants to record the session but not the entire screen, just the content of the session which he delivered. That's where the necessity of this feature arrises. 
-**4. Hiding Incoming Videos / Muting Incoming Audios**
-Surely a very useful feature in *Microsoft Teams* as it ensures that we can opt to hide/unhide ( mute/unmute ) remote video streams according to our internet connection / distraction level.
+### **2. Whiteboard**
+In the era of everything being online, a feature like collaborative whiteboard is surely a useful one. It can be used to explain stuff to other participants in the room or simply as a relaxation tool ( playing [scribble](https://skribbl.io/) or doodling )
+<br>
+*Everything on the board can be easily downloaded as an image in one click. A better UX as now the user doesn't need to take screenshots ( if needed )*
+
+### **3. Video Stream Recording**
+There might be a case where an instructor wants to record the session but not the entire screen, just the content he delivered in the session. That's where the necessity of this feature arrises. 
+### **4. Hiding Incoming Videos / Muting Incoming Audios**
+Surely a very useful feature in *Microsoft Teams* as it ensures that we can opt to hide/unhide ( mute/unmute ) remote video (audio) streams according to our internet connection / distraction level.
 *Useful when a speaker in the room wants to avoid any kind of disturbance.*
-**5. Download Attendees Activity**
+### **5. Download Attendees Activity**
 The person who starts the meeting / creates the room may want to keep a record of which participant joined/left at what time, or, simply track the attendance. This feature allows to download all this activity in one click.
 
 ## Deployment 
@@ -87,13 +89,8 @@ then improve the product to make it more potential.
 5. Improving UI/UX on the basis of reviews from family members, friends and mentors.
 6. Working on making Video Demo & updating README.md
 
-## Scope Of Improvement
-- *Screen Sharing can be improved to be visible on full screen*
-- *Share Room link / Room Code directly from the app*
-- ***"Download Attendees Activity"** downloads only the activities prior to you joining, can be further extended to downloading the activities since the beginning of meeting*
-
 ## Libraries and Dependencies
-The project “Meet-Up” is built in HTML, CSS, Javascript & NodeJS using webRTC
+The project “Meet-Up” is built using HTML, CSS, Javascript & NodeJS using webRTC
 - [socket.io](https://www.npmjs.com/package/socket.io)
 -	[moment-timezone](https://www.npmjs.com/package/moment-timezone)
 - [nodemon](https://www.npmjs.com/package/nodemon)
@@ -128,9 +125,14 @@ DBNAME = <NAME OF YOUR DATABASE>
 node server.js
 ```
 
-## Next plans for "Meet-Up"
-- Try to refine the features from ***"Improvement"*** point of view
-- Work on implementing the features planned earlier ( listed below )
+## Future Enhancements planned for "Meet-Up"
+
+### Try to refine the features from ***"Improvement"*** point of view
+1. *Screen Sharing can be improved to be visible on full screen*
+2. *Share Room link / Room Code directly from the app*
+3. ***"Download Attendees Activity"** downloads only the activities prior to you joining, can be further extended to downloading the activities since the beginning of meeting*
+
+### Work on implementing the features planned earlier ( listed below )
 1. Adding EmojiPicker in chat
 2. Feature for Setting a custom Room Name corresponding to Room Code every time a new Room is created
 3. Adding user authentication ➡️ displaying the list of Rooms a user is part of on the Landing page itself
