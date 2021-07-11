@@ -6,6 +6,13 @@ function newRoomCode() {
     });
 }
 
+// Adding event listener to the logo ( from UX point of view )
+const logoButton = document.querySelector(".logo");
+
+logoButton.addEventListener('click', (e) => {
+    location.href = `/`;
+});
+
 // Adding event listener to the create room button
 const createButton = document.querySelector("#createroom");
 

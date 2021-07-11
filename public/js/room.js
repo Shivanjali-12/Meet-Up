@@ -622,18 +622,24 @@ socket.on('action', (msg, sid) => {
         handInfo[sid] = 'off';
     }
     else if (msg == 'clap') {
+        let audio = new Audio("../audio/notification.wav");
+        audio.play();
         document.querySelector(".reactbypeer").innerHTML = cName[sid] + " Clapped !!";
         setTimeout(() => {
             document.querySelector(".reactbypeer").innerHTML = "";
         }, 3000);
     }
     else if (msg == 'thumbsup') {
+        let audio = new Audio("../audio/notification.wav");
+        audio.play();
         document.querySelector(".reactbypeer").innerHTML = cName[sid] + " gave a Thumbs Up !!";
         setTimeout(() => {
             document.querySelector(".reactbypeer").innerHTML = "";
         }, 3000);
     }
     else if (msg == 'heart') {
+        let audio = new Audio("../audio/notification.wav");
+        audio.play();
         document.querySelector(".reactbypeer").innerHTML = cName[sid] + " reacted Heart !!";
         setTimeout(() => {
             document.querySelector(".reactbypeer").innerHTML = "";
@@ -745,7 +751,7 @@ msgSaveButton.addEventListener("click", (e) => {
         document.body.removeChild(a);
         return;
     }
-    alert("No chat messages to save");
+    alert("No chat messages to save !!");
 });
 
 // Adding event listener to the button clicking which attendies activity get downloaded ( txt file )
@@ -761,7 +767,7 @@ AttendiesDataButton.addEventListener("click", (e) => {
         document.body.removeChild(a);
         return;
     }
-    alert("No Attendie entered the room after you yet");
+    alert("No Attendee entered the room after you yet !!");
 });
 
 ///////////////////////////////////////////////////////////////

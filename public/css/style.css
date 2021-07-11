@@ -27,6 +27,9 @@ body {
   padding: 0 12%;
   margin-top: 35px;
 }
+.logo:hover {
+  cursor: pointer;
+}
 
 /* Styling the dropdown Button for showing the list of existing rooms */
 .dropdown {
@@ -567,6 +570,7 @@ body {
 
 /* Styling of top reaction utilities starts here */
 .container-room .left-cont .utilstop{
+  font-size: 21px;
   display: flex;
   position: absolute;
   top: 35px;
@@ -757,7 +761,7 @@ body {
 }
 .container-room .right-cont .chat-cont {
   height: 83vh;
-  padding: 10px;
+  padding: 10px 10px 50px 10px;
   overflow-y: scroll;
 }
 .container-room .right-cont .chat-cont .message {
@@ -846,7 +850,7 @@ body {
     bottom:5px;
     top: 10px;
     left: 20px;
-    font-size: 10px;
+    font-size: 13px;
   }
   .container-room .left-cont .whiteboard-cont {
     height: 30vh;
@@ -950,6 +954,14 @@ body {
 }
 
 @media (max-width: 480px){
+  .logo {
+    font-size: 20px;
+  }
+  .dropbutton {
+    font-size: 10px;
+    padding: 6px;
+    border-radius: 8px;
+  }
   .container-room .left-cont .footer {
     font-size: 8px;
     margin-bottom: 8px;
