@@ -23,7 +23,7 @@
 - **Download Attendees Activity** 📥 ( Information about which participant joined the current conference at what time and left at what time can be downloaded as a .txt file )
 - Completely **Responsive** for mobile devices ✔️
 
-## *IDEA* behind adding some Paricular Features / Driving Forces
+## *IDEA* behind adding some Particular Features / Driving Forces
 ### **1. Download Chat Feature**
 If a professor uses the product and he/she wants to save all the "in chat" discussions locally in his system, he/she can simply download the chat messages along with date, time and sender's name in one click ( instead of copy-pasting the entire chat )
 ### **2. Whiteboard**
