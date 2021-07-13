@@ -947,7 +947,7 @@ body {
   }
 }
 
-@media (max-width: 480px){
+@media (max-width: 435px){
   .logo {
     font-size: 20px;
   }
@@ -955,6 +955,9 @@ body {
     font-size: 10px;
     padding: 6px;
     border-radius: 8px;
+  }
+  .overlay .box {
+    width: 60%;
   }
   .container-room .left-cont .footer {
     font-size: 8px;
@@ -972,7 +975,7 @@ body {
   .container-room .left-cont .footer .utilsleft .attendies-data,
   .container-room .left-cont .footer .utilsleft .mute-everyone,
   .container-room .left-cont .footer .utilsleft .hide-everyone {
-  margin-left: 6px;
+  margin-left: 3px;
   }
   .container-room .left-cont .footer .utils .novideo, 
   .container-room .left-cont .footer .utils .audio,
@@ -982,13 +985,13 @@ body {
     padding: 5px;
   }
   .container-room .left-cont .footer .copycode-cont .copycode-button {
-    font-size: 8px;
+    font-size: 7px;
     padding: 3px;
-    width: 60px;
+    width: 50px;
   }
   .container-room .left-cont .footer .copycode-cont .roomcode {
     color: #9958e6;
-    padding: 3px 6px;
+    padding: 3px 4px;
     border-bottom: 3px solid #9958e6;
   }
 }

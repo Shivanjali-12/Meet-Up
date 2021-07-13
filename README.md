@@ -26,7 +26,7 @@
 If a professor uses the product and he/she wants to save all the "in chat" discussions locally in his system, he/she can simply download the chat messages along with date, time and sender's name in one click ( instead of copy-pasting the entire chat )
 ### **2. Whiteboard**
 In the era of everything being online, a feature like collaborative whiteboard is surely a useful one. It can be used to explain stuff to other participants in the room or simply as a relaxation tool ( playing [scribble](https://skribbl.io/) or doodling )
-<br>
+<br><br>
 *Everything on the board can be easily downloaded as an image in one click. A better UX as now the user doesn't need to take screenshots ( if needed )*
 
 ### **3. Video Stream Recording**
@@ -43,51 +43,62 @@ The person who starts the meeting / creates the room may want to keep a record o
 
 ## Video Demonstration 
 🚀 Here's the link to the video demonstration of Meet-Up 🚀
+- https://vimeo.com/574326164
 
 # Approach Towards Building the Project
 ### Development Methodology - Scrum Methodology
-**Agile Scrum Methodology** is basically incremental development i.e. we build the product in iterations, step by step.
-We work in “Sprints” where each sprint lasts for a week or two, and focus on building the important features first and 
-then improve the product to make it more potential.
+**Agile Scrum Methodology** is basically incremental development i.e. we build the product in iterations, step by step. <br><br>
+We work in “Sprints” where each sprint lasts for a week or two, and focus on building the important features first and then improve the product to make it more potential.
 
 ### Here are the sprints I had set for myself for the 4 week journey 😄
 
-#### INITIAL DAYS ( WEEK 0 )
-1. Learning more about Backend Development
-2. Researching about how video conferencing apps work ; what technologies / APIs / SDKs are used
-3. Deciding the Tech Stack and finding suitable resources
-4. Designing my product (using [Canva](https://www.canva.com/) )
+#### WEEK 0 ( INITIAL DAYS )
+1. **Learning** more about Backend Development
+2. **Researching** about how video conferencing apps work ; what technologies / APIs / SDKs are used
+3. **Deciding the Tech Stack** and finding suitable resources
+4. **Designing** my product (using [Canva](https://www.canva.com/) )
 
-#### WEEK 1
+#### WEEK 1 ( BUILD PHASE )
 1. Setting up the server and adding the functionality to access the webcam and microphone to stream my own video
-2. Connecting other clients to have a simple video call ( MINIMUM REQUIRED FUNCTIONALITY )
+2. Connecting other clients to have a simple video call **( MINIMUM REQUIRED FUNCTIONALITY )**
 3. Adding Video/Audio Toggle Buttons
-4. Designing Landing Page
-5. Learning about how random Room IDs can be generated
+4. Adding features that may enhance **User Experience** ( Adding Create Room / Copy Room code Feature )
+5. **Styling and Testing**
+<br>
 
-#### WEEK 2
-1. Adding Create Room / Copy Room code / Leave Room Functionality
-2. Setting a custom Room Name corresponding to Room Code every time a new Room is created **( not implemented as of now, But sure of doing it in near future )**
-3. Adding Ability to set username before entering a room
-4. Styling the room page according to the design planned
-5. Adding Chat Feature - send and view messages along with the sender’s name and the time at which message is sent.
-6. Adding EmojiPicker in Chat **( not implemented as of now, But sure of doing it in near future )**
+**ISSUES :**
+Setting a custom Room Name corresponding to Room Code every time a new Room is created **( not implemented as of now, But sure of doing it in near future )**
 
-#### WEEK 3
-1. Adding features which are included in almost all video conferencing apps – Screen Sharing, 'Screen / Video Stream' Recording
-2. Adding Hand Raise Feature
-3. Adding Whiteboard Feature ( A really useful feature which can be used to clear friends’ doubts or simply play scribble )
+#### WEEK 2 ( BUILD PHASE )
+1. Adding **Basic Chat Feature** - send and view messages along with the sender’s name and the time at which message is sent.
+2. Adding features which are included in almost all video conferencing apps – Screen Sharing, 'Screen / Video Stream' Recording
+3. Adding Hand Raise Feature
 4. Taking inspiration from Microsoft Teams – Adding ability to send reactions, Mute incoming videos / audios
-5. Making the product mobile responsive and improving UI/UX
+<br>
 
-#### WEEK 4
-1. Adding easy yet useful features – Saving whiteboard as an image / downloading chat messages / downloading attendees activity
-2. Attaching database ( [MongoDB Atlas](https://www.mongodb.com/) ) to persist messages in order to continue conversation anytime later ( TRYING TO IMPLEMENT SURPRISE FEATURE )
+**ISSUES :**
+Adding EmojiPicker in Chat **( not implemented as of now, But sure of doing it in near future )**
+
+#### WEEK 3 ( X-FACTOR TIME )
+1. **Examining** and planning useful features for Meet-Up
+2. Adding Whiteboard ( A really useful feature which can be used to clear friends’ doubts or simply play [scribble](https://skribbl.io/) )
+4. Adding **easy yet useful features** – Saving whiteboard as an image / downloading chat messages / downloading attendees activity
+5. Making the product **Responsive and Improving UI/UX**
+
+#### WEEK 4 ( ADAPT PHASE )
+1. Attaching database ( [MongoDB Atlas](https://www.mongodb.com/) ) to persist messages in order to continue conversation anytime later **( TRYING TO IMPLEMENT SURPRISE FEATURE )**
 3. Adding user authentication ➡️ displaying the list of Rooms a user is part of on the Landing page itself
 **( not implemented as of now, But sure of doing it in near future )**
-4. Deploying the application on Heroku – Main motive being, taking inputs from family members, friends and mentors - What improvements can be made
-5. Improving UI/UX on the basis of reviews from family members, friends and mentors.
+4. **Deploying the application** on Heroku – Main motive being, taking inputs from family members, friends and mentors - What improvements can be made
+5. **Improving UI/UX** on the basis of reviews from family members, friends and mentors.
 6. Working on making Video Demo & updating README.md
+
+## SNAPSHOTS
+
+<img width = "900" src = "./Screenshots/Landing.png">
+<img  width = "900" src = "./Screenshots/Mentors.png">
+<img width = "900" src = "./Screenshots/Family.png">
+<img  width = "900" src = "./Screenshots/Responsive.png">
 
 ## Libraries and Dependencies
 The project “Meet-Up” is built using HTML, CSS, Javascript & NodeJS using webRTC
@@ -125,14 +136,18 @@ DBNAME = <NAME OF YOUR DATABASE>
 node server.js
 ```
 
+- The server will listen on PORT 3000 ( localhost:3000 )
+
 ## Future Enhancements planned for "Meet-Up"
 
-### Try to refine the features from ***"Improvement"*** point of view
+### - Take constant feedbacks and suggestions from friends and family
+
+### - Try to refine the features from ***"Improvement"*** point of view
 1. *Screen Sharing can be improved to be visible on full screen*
 2. *Share Room link / Room Code directly from the app*
 3. ***"Download Attendees Activity"** downloads only the activities prior to you joining, can be further extended to downloading the activities since the beginning of meeting*
 
-### Work on implementing the features planned earlier ( listed below )
-1. Adding EmojiPicker in chat
-2. Feature for Setting a custom Room Name corresponding to Room Code every time a new Room is created
-3. Adding user authentication ➡️ displaying the list of Rooms a user is part of on the Landing page itself
+### - Work on implementing the features planned earlier
+1. *Adding EmojiPicker in chat*
+2. *Feature for Setting a custom Room Name corresponding to Room Code every time a new Room is created*
+3. *Adding user authentication ➡️ displaying the list of Rooms a user is part of on the Landing page itself*
