@@ -160,6 +160,7 @@ function handleVideoOffer(offer, sid, cname, micinf, vidinf, handinf) {
             let videoOff = document.createElement('div');
             let handUp = document.createElement('div');
 
+            //Adding respective classes
             videoOff.classList.add('video-off');
             muteIcon.classList.add('mute-icon');
             handUp.classList.add('hand-icon');
@@ -178,12 +179,13 @@ function handleVideoOffer(offer, sid, cname, micinf, vidinf, handinf) {
             vidCont.classList.add('video-box');
             newvideo.classList.add('video-frame');
             newvideo.autoplay = true;
-            newvideo.playsinline = true;
+            newvideo.playsinline = true; //playing video where it is ( instead of opening it up to fullscreen)
             newvideo.id = `video${sid}`;
             newvideo.srcObject = event.streams[0];
 
             streams.push(event.streams[0]); //adding-streams-in-our-list
 
+            //Setting Up visibility according to the info
             if (micInfo[sid] == 'on')
                 muteIcon.style.visibility = 'hidden';
             else
@@ -198,6 +200,7 @@ function handleVideoOffer(offer, sid, cname, micinf, vidinf, handinf) {
                 handUp.style.visibility = 'visible';
             else
                 handUp.style.visibility = 'hidden';
+            //
 
             vidCont.appendChild(newvideo);
             vidCont.appendChild(name);
@@ -322,6 +325,7 @@ socket.on('join room', async (conc, cnames, micinfo, videoinfo, handinfo) => {
                     let videoOff = document.createElement('div');
                     let handUp = document.createElement('div');
 
+                    //Adding respective classes
                     videoOff.classList.add('video-off');
                     muteIcon.classList.add('mute-icon');
                     handUp.classList.add('hand-icon');
@@ -340,11 +344,12 @@ socket.on('join room', async (conc, cnames, micinfo, videoinfo, handinfo) => {
                     vidCont.classList.add('video-box');
                     newvideo.classList.add('video-frame');
                     newvideo.autoplay = true;
-                    newvideo.playsinline = true;
+                    newvideo.playsinline = true; //playing video where it is ( instead of opening it up to fullscreen)
                     newvideo.id = `video${sid}`;
                     newvideo.srcObject = event.streams[0];
                     streams.push(event.streams[0]);
 
+                    //Setting Up visibility according to the info
                     if (micInfo[sid] == 'on')
                         muteIcon.style.visibility = 'hidden';
                     else
@@ -838,6 +843,7 @@ function screenShareToggle() {
 
 // SCREEN SHARING FEATURE ENDS HERE //
 
+///////////////////////////////////////////////////////////////////////////////////
 
 //WHITEBOARD FEATURE STARTS HERE //
 const whiteboardButton = document.querySelector('.board-icon');
@@ -857,7 +863,7 @@ whiteboardButton.addEventListener('click', () => {
     }
 })
 
-// setting up oue whiteboard canvas starts here //
+// setting up our whiteboard canvas starts here //
 
 const canvas = document.querySelector("#whiteboard");
 const ctx = canvas.getContext('2d');
@@ -866,9 +872,11 @@ const ctx = canvas.getContext('2d');
 let boardVisisble = false;
 whiteboardCont.style.visibility = 'hidden';  
 
-let isDrawing = 0;
+let isDrawing = 0;  //initial 
 let x = 0;
 let y = 0;
+
+// default colur is set to black
 let color = "black";
 let drawsize = 3;
 let colorRemote = "black";
@@ -892,7 +900,7 @@ socket.on('getCanvas', url => {
     function start() {
         ctx.drawImage(img, 0, 0);
     }
-
+    // for showing the updates whiteboard to all the participants
     console.log('Got canvas', url);
 })
 
@@ -909,7 +917,6 @@ function setEraser() {
 }
 
 // Setting up the whiteboard drawing functionality starts here //
-
 function draw(newx, newy, oldx, oldy) {
     ctx.strokeStyle = color;
     ctx.lineWidth = drawsize;
@@ -922,6 +929,8 @@ function draw(newx, newy, oldx, oldy) {
     socket.emit('store canvas', canvas.toDataURL());
 
 }
+
+// drawing is done through mouse movements //
 
 function drawRemote(newx, newy, oldx, oldy) {
     ctx.strokeStyle = colorRemote;
@@ -1016,6 +1025,7 @@ function userMediaAvailable() {
 const recordScreenButton = document.querySelector('.record-screen');
 let isScreenRecording = false; // initially screen is not being recorded
 
+//share the screen to the "recorder" first
 recordScreenButton.addEventListener("click", (e) => {
     if (isScreenRecording) {
         recordScreenButton.innerHTML = `<i class="fas fa-record-vinyl"></i><span class="tooltiptext">Record Entire Screen</span>`;

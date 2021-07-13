@@ -2,12 +2,14 @@
 #### Meet-Up is a "Microsoft Teams Clone" Web Application built under Microsoft Engage Mentorship Program 2021.
 
 ## Features of "Meet-Up"
-- Video conferencing with no limit on the number of participants
+- Video conferencing with **no limit for the number of participants**
+- Talk endlessly ( no upper limit for call duration )
 - **Create Rooms** by generating random Room Code & **Copy Room Code** for sharing with people
-- **Join a Room** by entering the Room Code
+- **Join a Room** by simply entering the Room Code
 - **Audio Toggle** - Mute / Unmute Mic 🎤
 - **Video Toggle** - Hide / Unhide Video 📷
 - **Text Chat** with all participants ( messages sent are all saved and the conversation can be continued anytime ✌️ )
+- **Auto Scroll** for chat messages
 - **Download Chat** 📥 ( All chat messages along with sender’s name & date-time can be downloaded in .TXT file with just one click )
 - Joining / Leaving of participants is **notified** in the Chat by "Bot" 🤖
 - **Screen Sharing** - Share your screen / chrome tab / window with all the participants 💻
@@ -84,6 +86,10 @@ Adding EmojiPicker in Chat **( not implemented as of now, But sure of doing it i
 2. Adding Whiteboard ( A really useful feature which can be used to clear friends’ doubts or simply play [scribble](https://skribbl.io/) )
 4. Adding **easy yet useful features** – Saving whiteboard as an image / downloading chat messages / downloading attendees activity
 5. Making the product **Responsive and Improving UI/UX**
+<br>
+
+**ISSUES :**
+Ability to Draw on Whiteboard using Screen Touch **( not implemented as of now, But sure of doing it in near future )**
 
 #### WEEK 4 ( ADAPT PHASE )
 1. Attaching database ( [MongoDB Atlas](https://www.mongodb.com/) ) to persist messages in order to continue conversation anytime later **( TRYING TO IMPLEMENT SURPRISE FEATURE )**
@@ -149,5 +155,6 @@ node server.js
 
 ### - Work on implementing the features planned earlier
 1. *Adding EmojiPicker in chat*
-2. *Feature for Setting a custom Room Name corresponding to Room Code every time a new Room is created*
-3. *Adding user authentication ➡️ displaying the list of Rooms a user is part of on the Landing page itself*
+2. *Adding feature that will allow a user to draw on whiteboard using screen touch*
+3. *Feature for Setting a custom Room Name corresponding to Room Code every time a new Room is created*
+4. *Adding user authentication ➡️ displaying the list of Rooms a user is part of on the Landing page itself*
